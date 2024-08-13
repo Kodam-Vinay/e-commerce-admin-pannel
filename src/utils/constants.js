@@ -99,66 +99,75 @@ export const MobileAppBar = styled(MuiAppBar, {
 }));
 
 export const NAVBAR_SETTINGS = ["Profile", "Logout"];
+export const USER_ROLES = [
+  {
+    role: process.env.REACT_APP_USERS_ROLE_1,
+    name: process.env.REACT_APP_USERS_ROLE_1?.replace(/(^|\s)\S/g, (l) =>
+      l.toUpperCase()
+    ),
+  },
+  {
+    role: process.env.REACT_APP_USERS_ROLE_2,
+    name: process.env.REACT_APP_USERS_ROLE_2?.replace(/(^|\s)\S/g, (l) =>
+      l.toUpperCase()
+    ),
+  },
+  {
+    role: process.env.REACT_APP_USERS_ROLE_3,
+    name: process.env.REACT_APP_USERS_ROLE_3?.replace(/(^|\s)\S/g, (l) =>
+      l.toUpperCase()
+    ),
+  },
+];
 export const SIDEBAR_LINKS = {
   home: {
     path: "/",
     name: "Home",
     element: <Home />,
-    roles: ["admin", "seller"],
+    roles: [
+      process.env.REACT_APP_USERS_ROLE_1,
+      process.env.REACT_APP_USERS_ROLE_2,
+    ],
   },
   products: {
     path: "/products",
     name: "Products",
     element: <AiFillProduct size={20} />,
-    roles: ["seller"],
+    roles: [process.env.REACT_APP_USERS_ROLE_2],
   },
   users: {
     path: "/users",
     name: "Users",
     element: <PeopleAltIcon />,
-    roles: ["admin"],
+    roles: [process.env.REACT_APP_USERS_ROLE_1],
   },
   sellers: {
     path: "/sellers",
     name: "Sellers",
     element: <GiShop size={20} />,
-    roles: ["admin"],
+    roles: [process.env.REACT_APP_USERS_ROLE_1],
   },
   categories: {
     path: "/categories",
     name: "Categories",
     element: <CategoryIcon size={20} />,
-    roles: ["admin"],
+    roles: [process.env.REACT_APP_USERS_ROLE_1],
   },
   subcategories: {
     path: "/sub-categories",
     name: "Sub categories",
     element: <TbCategoryPlus size={20} />,
-    roles: ["admin"],
+    roles: [process.env.REACT_APP_USERS_ROLE_1],
   },
   brands: {
     path: "/brands",
     name: "Brands",
     element: <TbBrandAdobe size={20} />,
-    roles: ["admin"],
+    roles: [process.env.REACT_APP_USERS_ROLE_1],
   },
 };
 
 export const API_URL = "http://localhost:8000/api/";
-export const USER_ROLES = [
-  {
-    role: "admin",
-    name: "Admin",
-  },
-  {
-    role: "seller",
-    name: "Seller",
-  },
-  {
-    role: "buyer",
-    name: "Buyer",
-  },
-];
 
 export const storeToastError = ({ errorMessage }) => {
   toast.error(errorMessage, {

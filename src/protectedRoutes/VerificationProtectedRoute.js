@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import { ROUTING_PATHS } from "../utils/constants";
 
 const VerificationProtectedRoute = ({ children }) => {
   const prevPath = useSelector(
@@ -12,15 +13,15 @@ const VerificationProtectedRoute = ({ children }) => {
   );
 
   return Object.keys(userDetails)?.length > 0 && userDetails?.jwtToken ? (
-    <Navigate to={"/"} />
+    <Navigate to={ROUTING_PATHS.home} />
   ) : Object.keys(userDetails)?.length > 0 && !userDetails?.jwtToken ? (
     children
   ) : (
     <Navigate
       to={
-        prevPath === "/sign-in" || prevPath === "/sign-up"
+        prevPath === ROUTING_PATHS.signin || prevPath === ROUTING_PATHS.signup
           ? prevPath
-          : "/sign-in"
+          : ROUTING_PATHS.signin
       }
     />
   );

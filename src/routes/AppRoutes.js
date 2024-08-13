@@ -29,6 +29,7 @@ import ForgetPassword from "../auth/ForgetPassword";
 import Categories from "../pages/Categories";
 import Brands from "../pages/Brands";
 import SubCategories from "../pages/SubCategories";
+import ForgetPasswordProtectedRoute from "../protectedRoutes/ForgetPasswordProtectedRoute";
 
 const RenderLayout = () => {
   const location = useLocation();
@@ -155,7 +156,11 @@ const AppRoutes = () => {
         },
         {
           path: ROUTING_PATHS.forgetpassword,
-          element: <ForgetPassword />,
+          element: (
+            <ForgetPasswordProtectedRoute>
+              <ForgetPassword />
+            </ForgetPasswordProtectedRoute>
+          ),
         },
       ],
     },

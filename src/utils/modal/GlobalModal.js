@@ -15,6 +15,14 @@ export default function GlobalModal() {
 
   const dispatch = useDispatch();
   const isModalOpen = useSelector((store) => store?.modal?.isModalOpen);
+  const paths = [
+    MODAL_CONTENT_TYPES.deleteUser,
+    MODAL_CONTENT_TYPES.logout,
+    MODAL_CONTENT_TYPES.deleteCategory,
+    MODAL_CONTENT_TYPES.deleteBrand,
+    MODAL_CONTENT_TYPES.deleteSubCategory,
+    MODAL_CONTENT_TYPES.deleteProduct,
+  ];
   return (
     <Modal
       open={isModalOpen}
@@ -24,6 +32,9 @@ export default function GlobalModal() {
       }}
       sx={{
         zIndex: zIndex,
+        border: paths?.includes(contentType)
+          ? "1px solid red"
+          : "1px solid #5046e5",
       }}
     >
       <ModalDialog
@@ -33,12 +44,7 @@ export default function GlobalModal() {
           zIndex: zIndex,
         }}
       >
-        {contentType === MODAL_CONTENT_TYPES.deleteUser ||
-        contentType === MODAL_CONTENT_TYPES.logout ? (
-          <ConfirmationModal />
-        ) : (
-          <InputModal />
-        )}
+        {paths?.includes(contentType) ? <ConfirmationModal /> : <InputModal />}
       </ModalDialog>
     </Modal>
   );

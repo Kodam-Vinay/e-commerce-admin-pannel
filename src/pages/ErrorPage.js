@@ -37,7 +37,11 @@ export default function ErrorPage() {
           <Typography variant="h6" className="text-center w-full">
             The page you’re looking for doesn’t exist.
           </Typography>
-          <CustomButton label="Back" onClick={() => navigate(prevPath)} />
+          <CustomButton
+            label="Back"
+            onClick={() => navigate(prevPath)}
+            className={"w-full max-w-96 h-10"}
+          />
         </Grid>
       </Container>
     </Box>

@@ -17,6 +17,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Drawer, DrawerHeader, SIDEBAR_LINKS } from "../utils/constants";
 import { useSelector } from "react-redux";
+import useDeviceResize from "../hooks/useDeviceResize";
 
 const Sidebar = ({ isDrawerOpen, setIsDrawerOpen, handleDrawerClose }) => {
   const navigate = useNavigate();
@@ -27,19 +28,24 @@ const Sidebar = ({ isDrawerOpen, setIsDrawerOpen, handleDrawerClose }) => {
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation">
       <List>
-        {SIDEBAR_LINKS.map(
-          (eachItem, index) =>
-            SIDEBAR_LINKS[index].roles.includes(userDetails?.role) && (
-              <ListItem key={eachItem.name} disablePadding>
-                <Tooltip title={eachItem.name} className="flex py-1 my-1">
+        {Object.keys(SIDEBAR_LINKS).map(
+          (eachItem) =>
+            SIDEBAR_LINKS[eachItem].roles.includes(userDetails?.role) && (
+              <ListItem key={SIDEBAR_LINKS[eachItem].name} disablePadding>
+                <Tooltip
+                  title={SIDEBAR_LINKS[eachItem].name}
+                  className="flex py-1 my-1"
+                >
                   <ListItemButton
                     onClick={() => {
-                      navigate(eachItem.path);
+                      navigate(SIDEBAR_LINKS[eachItem].path);
                       setIsDrawerOpen(false);
                     }}
                   >
-                    <ListItemIcon>{eachItem.element}</ListItemIcon>
-                    <ListItemText primary={eachItem.name} />
+                    <ListItemIcon>
+                      {SIDEBAR_LINKS[eachItem].element}
+                    </ListItemIcon>
+                    <ListItemText primary={SIDEBAR_LINKS[eachItem].name} />
                   </ListItemButton>
                 </Tooltip>
               </ListItem>
@@ -48,7 +54,7 @@ const Sidebar = ({ isDrawerOpen, setIsDrawerOpen, handleDrawerClose }) => {
       </List>
     </Box>
   );
-
+  const size = useDeviceResize();
   return (
     <>
       <MobileDrawer open={isDrawerOpen} className="mxs:hidden">
@@ -58,7 +64,8 @@ const Sidebar = ({ isDrawerOpen, setIsDrawerOpen, handleDrawerClose }) => {
             flexDirection: "row",
             paddingRight: "10px",
             justifyContent: "space-between",
-            maxWidth: "160px",
+            maxWidth:
+              size?.width > 299 && size?.width < 475 ? "190px" : "160px",
             backgroundColor: "#5046e5",
           }}
         >
@@ -94,7 +101,7 @@ const Sidebar = ({ isDrawerOpen, setIsDrawerOpen, handleDrawerClose }) => {
             flexDirection: "row",
             paddingRight: "10px",
             justifyContent: "space-between",
-            maxWidth: "160px",
+            maxWidth: "190px",
             backgroundColor: "#5046e5",
           }}
         >

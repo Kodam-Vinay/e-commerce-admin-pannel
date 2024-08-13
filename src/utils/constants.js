@@ -6,10 +6,14 @@ import MuiDrawer from "@mui/material/Drawer";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { GiShop } from "react-icons/gi";
 import { Bounce, toast } from "react-toastify";
+import CategoryIcon from "@mui/icons-material/Category";
+import { TbCategoryPlus, TbBrandAdobe } from "react-icons/tb";
 
 // dashboard
 
-export const DESKTOP_WIDTH = 160;
+export const MOBILE_WIDTH = 160;
+
+export const DESKTOP_WIDTH = 190;
 
 export const openedMixin = (theme) => ({
   width: DESKTOP_WIDTH,
@@ -76,33 +80,69 @@ export const AppBar = styled(MuiAppBar, {
   }),
 }));
 
+export const MobileAppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  zIndex: theme?.zIndex?.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: MOBILE_WIDTH,
+    width: `calc(100% - ${MOBILE_WIDTH}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
 export const NAVBAR_SETTINGS = ["Profile", "Logout"];
-export const SIDEBAR_LINKS = [
-  {
+export const SIDEBAR_LINKS = {
+  home: {
     path: "/",
     name: "Home",
     element: <Home />,
     roles: ["admin", "seller"],
   },
-  {
+  products: {
     path: "/products",
     name: "Products",
     element: <AiFillProduct size={20} />,
     roles: ["seller"],
   },
-  {
+  users: {
     path: "/users",
     name: "Users",
     element: <PeopleAltIcon />,
     roles: ["admin"],
   },
-  {
+  sellers: {
     path: "/sellers",
     name: "Sellers",
     element: <GiShop size={20} />,
     roles: ["admin"],
   },
-];
+  categories: {
+    path: "/categories",
+    name: "Categories",
+    element: <CategoryIcon size={20} />,
+    roles: ["admin"],
+  },
+  subcategories: {
+    path: "/sub-categories",
+    name: "Sub categories",
+    element: <TbCategoryPlus size={20} />,
+    roles: ["admin"],
+  },
+  brands: {
+    path: "/brands",
+    name: "Brands",
+    element: <TbBrandAdobe size={20} />,
+    roles: ["admin"],
+  },
+};
 
 export const API_URL = "http://localhost:8000/api/";
 export const USER_ROLES = [
@@ -133,6 +173,7 @@ export const storeToastError = ({ errorMessage }) => {
     transition: Bounce,
   });
 };
+
 export const storeToastSuccess = ({ successMessage }) => {
   toast.success(successMessage, {
     position: "top-center",
@@ -148,6 +189,8 @@ export const storeToastSuccess = ({ successMessage }) => {
 };
 
 export const CLOUDINARY_IMAGE_ACCESS_URL = `https://res.cloudinary.com/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload/v1717994027/${process.env.REACT_APP_CLOUDINARY_PRESET}/`;
+export const CLOUDINARY_IMAGE_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`;
+
 export const filterUsersFunc = (list, role) => {
   if (list?.length === 0 || !role) {
     return [];
@@ -188,8 +231,43 @@ export const columns = [
   {
     id: "delete",
     label: "",
-    minWidth: 20,
+    minWidth: 10,
   },
+];
+
+export const categoriesBrandColumns = [
+  { id: "s_no", label: "S.NO", minWidth: 5 },
+  { id: "name", label: "Name", minWidth: 10 },
+  { id: "status", label: "Status", minWidth: 10 },
+  { id: "update", label: "", minWidth: 5 },
+  { id: "delete", label: "", minWidth: 5 },
+];
+
+export const subCategoriesColumns = [
+  { id: "s_no", label: "S.NO", minWidth: 5 },
+  { id: "name", label: "Name", minWidth: 10 },
+  { id: "status", label: "Status", minWidth: 10 },
+  { id: "category", label: "Category", minWidth: 10 },
+  { id: "brands", label: "Brands", minWidth: 10 },
+  { id: "update", label: "", minWidth: 5 },
+  { id: "delete", label: "", minWidth: 5 },
+];
+
+export const productColumns = [
+  { id: "s_no", label: "S.NO", minWidth: 5 },
+  { id: "name", label: "Name", minWidth: 10 },
+  { id: "category", label: "Category", minWidth: 10 },
+  { id: "sub_category", label: "Sub Category", minWidth: 10 },
+  { id: "brand", label: "Brand", minWidth: 10 },
+  { id: "features", label: "Features", minWidth: 10 },
+  { id: "price", label: "Price", minWidth: 10 },
+  { id: "description", label: "Description", minWidth: 10 },
+  { id: "stock", label: "Stock", minWidth: 10 },
+  { id: "specifications", label: "Specifications", minWidth: 10 },
+  { id: "images", label: "Images", minWidth: 10 },
+  { id: "is_premium", label: "Is Premium", minWidth: 5 },
+  { id: "update", label: "", minWidth: 5 },
+  { id: "delete", label: "", minWidth: 5 },
 ];
 
 export const MODAL_CONTENT_TYPES = {
@@ -197,7 +275,18 @@ export const MODAL_CONTENT_TYPES = {
   addBuyer: "add_buyer",
   addSeller: "add_seller",
   addProduct: "add_product",
+  addCategory: "add_category",
+  addSubCategory: "add_sub_category",
+  addBrand: "add_brand",
   logout: "logout",
+  updateCategory: "update_category",
+  updateSubCategory: "update_sub_category",
+  updateBrand: "update_brand",
+  updateProduct: "update_product",
+  deleteCategory: "delete_category",
+  deleteSubCategory: "delete_sub_category",
+  deleteBrand: "delete_brand",
+  deleteProduct: "delete_product",
 };
 
 export const customTheme = createTheme({
@@ -226,7 +315,175 @@ export const ROUTING_PATHS = {
   signup: "/sign-up",
   users: "/users",
   sellers: "/sellers",
+  categories: "/categories",
+  subcategories: "/sub-categories",
+  brands: "/brands",
   products: "/products",
   profile: "/profile",
   verifyotp: "/verify-otp",
+  forgetpassword: "/forget-password",
+};
+
+export const FORGET_FORM_CONSTANTS = {
+  initial: "INITIAL",
+  otpSend: "otpSend",
+  otpVerified: "otpVerified",
+  success: "SUCCESS",
+};
+
+export const CATEGORY_BRAND_FORM_PATHS = [
+  MODAL_CONTENT_TYPES.addBrand,
+  MODAL_CONTENT_TYPES.addCategory,
+  MODAL_CONTENT_TYPES.addSubCategory,
+  MODAL_CONTENT_TYPES.updateBrand,
+  MODAL_CONTENT_TYPES.updateCategory,
+  MODAL_CONTENT_TYPES.updateSubCategory,
+];
+
+export const USER_FORM_PATHS = [
+  MODAL_CONTENT_TYPES.addBuyer,
+  MODAL_CONTENT_TYPES.addSeller,
+];
+
+export const PRODUCT_FORM_PATHS = [
+  MODAL_CONTENT_TYPES.addProduct,
+  MODAL_CONTENT_TYPES.updateProduct,
+];
+
+export const filterCloudinaryImagesList = (list) => {
+  return list?.map((eachImage) => {
+    return {
+      image_id: eachImage?.asset_id,
+      url: eachImage?.public_id?.slice(28),
+      alt: eachImage?.original_filename,
+    };
+  });
+};
+
+export const checkAnyChangesMadeCategoriesBrands = (
+  type,
+  text,
+  status,
+  enteredText,
+  enteredStatus
+) => {
+  if (type === ROUTING_PATHS.categories) {
+    const checkText =
+      text?.toString().trim() !== enteredText?.toString().trim();
+    const checkStatus = status !== enteredStatus;
+    if (checkText || checkStatus) {
+      return true;
+    }
+    return false;
+  } else if (type === ROUTING_PATHS.brands) {
+    const checkText =
+      text?.toString().trim() !== enteredText?.toString().trim();
+    const checkStatus = status !== enteredStatus;
+    if (checkText || checkStatus) {
+      return true;
+    }
+    return false;
+  }
+};
+
+export const checkAnyChangesMadeSubCategories = (
+  subCategory,
+  enteredSubCategory,
+  status,
+  enteredStatus,
+  category,
+  enteredCategory,
+  brandsList,
+  enteredBrandsList
+) => {
+  const checkSubCategory =
+    subCategory?.toString().trim() !== enteredSubCategory?.toString().trim();
+  const checkStatus = status !== enteredStatus;
+  const checkCategory =
+    category?.toString().trim() !== enteredCategory?.toString().trim();
+  const checkBrandsList = brandsList?.length !== enteredBrandsList?.length;
+  if (checkSubCategory || checkStatus || checkCategory || checkBrandsList) {
+    return true;
+  }
+  return false;
+};
+
+export const checkImagesListChanges = (cloudinaryImagesList, dbImages) => {
+  return JSON.stringify(cloudinaryImagesList) !== JSON.stringify(dbImages);
+};
+
+export const checkAnyChangesMadeProduct = (
+  name,
+  enteredName,
+  price,
+  enteredPrice,
+  description,
+  enteredDescription,
+  features,
+  enteredFeatures,
+  brand,
+  enteredBrand,
+  isPremium,
+  storedIsPremium,
+  category,
+  enteredCategory,
+  subCategory,
+  enteredSubCategory,
+  stock,
+  enteredStock,
+  specifications,
+  enteredSpecifications,
+  cloudinaryImagesList,
+  dbImages
+) => {
+  const checkName = name?.toString().trim() !== enteredName?.toString().trim();
+
+  const checkPrice =
+    price?.toString().trim() !== enteredPrice?.toString().trim();
+
+  const checkDescription =
+    description?.toString().trim() !== enteredDescription?.toString().trim();
+
+  const checkFeatures =
+    features?.toString()?.trim()?.replace(/,+/g, ",").replace(/^,|,$/g, "") !==
+    enteredFeatures
+      ?.toString()
+      ?.trim()
+      ?.replace(/,+/g, ",")
+      .replace(/^,|,$/g, "");
+
+  const checkBrand =
+    brand?.toString().trim() !== enteredBrand?.toString().trim();
+
+  const checkPremiumChanges = isPremium !== storedIsPremium;
+
+  const checkCategory =
+    category?.toString().trim() !== enteredCategory?.toString().trim();
+
+  const checkSubCategory =
+    subCategory?.toString().trim() !== enteredSubCategory?.toString().trim();
+
+  const checkStock = JSON.stringify(stock) !== JSON.stringify(enteredStock);
+
+  const checkSpecifications =
+    JSON.stringify(specifications) !== JSON.stringify(enteredSpecifications);
+
+  const imagesChanged = checkImagesListChanges(cloudinaryImagesList, dbImages);
+
+  if (
+    checkName ||
+    checkPrice ||
+    checkDescription ||
+    checkFeatures ||
+    checkBrand ||
+    checkPremiumChanges ||
+    checkCategory ||
+    checkSubCategory ||
+    checkStock ||
+    checkSpecifications ||
+    imagesChanged
+  ) {
+    return true;
+  }
+  return false;
 };

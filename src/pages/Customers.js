@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { deleteRequest, getRequest } from "../api/apiCalls";
+import { deleteRequest } from "../api/apiCalls";
 import { useDispatch, useSelector } from "react-redux";
 import {
   filterUsersFunc,
   MODAL_CONTENT_TYPES,
+  SIDEBAR_LINKS,
   storeToastError,
   storeToastSuccess,
+  USER_ROLES,
 } from "../utils/constants";
-import Loader from "../components/Loader";
 import UsersTable from "../components/table/UsersTable";
 import {
   storeModalContent,
@@ -15,6 +16,7 @@ import {
   toggleModalConfirmState,
   toggleModalState,
 } from "../redux/slices/modalSlice";
+import useGetData from "../hooks/useGetData";
 
 const Customers = () => {
   const [data, setData] = useState([]);
@@ -24,25 +26,39 @@ const Customers = () => {
   const [page, setPage] = useState(0);
   const [deleteUserDetails, setDeleteUserDetails] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
   const userDetails = useSelector(
     (store) => store?.persistSliceReducer?.user?.userInfo
   );
-
   const confirmState = useSelector((store) => store?.modal?.isConfirmed);
   const dispatch = useDispatch();
   const contentType = useSelector((store) => store?.modal?.contentType);
 
+  useGetData({
+    apiUrl: `admin/all-users?page=${page + 1}&limit=${rowsPerPage}`,
+    error,
+    setError,
+    setIsError,
+    setData,
+    setLoading,
+    page,
+    rowsPerPage,
+  });
+
   useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      const res = await getRequest({
-        apiUrl: "admin/all-users",
-        setIsError,
-        setError,
+    const deleteUser = async () => {
+      const sendUserId = {
+        _id: deleteUserDetails?.user_id,
+      };
+      const res = await deleteRequest({
+        setError: setError,
+        setIsError: setIsError,
+        details: sendUserId,
         token: userDetails?.jwtToken,
+        apiUrl: "admin/delete-user",
       });
       if (res?.status) {
-        setData(res?.data?.users);
+        storeToastSuccess({ successMessage: res?.message });
       } else {
         if (res?.message) {
           storeToastError({
@@ -50,34 +66,8 @@ const Customers = () => {
           });
         }
       }
-      setLoading(false);
     };
-    getData();
-  }, [page, rowsPerPage, confirmState]);
-
-  useEffect(() => {
     if (confirmState && contentType === MODAL_CONTENT_TYPES.deleteUser) {
-      const deleteUser = async () => {
-        const sendUserId = {
-          _id: deleteUserDetails?.user_id,
-        };
-        const res = await deleteRequest({
-          setError: setError,
-          setIsError: setIsError,
-          details: sendUserId,
-          token: userDetails?.jwtToken,
-          apiUrl: "admin/delete-user",
-        });
-        if (res?.status) {
-          storeToastSuccess({ successMessage: res?.message });
-        } else {
-          if (res?.message) {
-            storeToastError({
-              errorMessage: res?.message ? res?.message : error,
-            });
-          }
-        }
-      };
       deleteUser();
       dispatch(toggleModalConfirmState(false));
     }
@@ -95,9 +85,11 @@ const Customers = () => {
     );
   };
 
-  const filterUsers = filterUsersFunc(data, "buyer");
-  const renderUi =
-    filterUsers?.length > 0 && !loading && !isError ? (
+  const filterUsers = filterUsersFunc(data, USER_ROLES[2].role);
+
+  return (
+    <div className="h-full w-full m-0">
+      <h1 className="mb-4 text-lg font-bold">{SIDEBAR_LINKS.users.name}</h1>
       <UsersTable
         data={filterUsers}
         handleDeleteUser={handleDeleteUser}
@@ -105,15 +97,12 @@ const Customers = () => {
         setRowsPerPage={setRowsPerPage}
         page={page}
         rowsPerPage={rowsPerPage}
+        loading={loading}
+        isError={isError}
+        notFoundText={SIDEBAR_LINKS.users.name}
       />
-    ) : !filterUsers?.length > 0 && !loading && !isError ? (
-      <div>No Users found</div>
-    ) : loading ? (
-      <Loader />
-    ) : (
-      ""
-    );
-  return <div className="h-full w-full m-0">{renderUi}</div>;
+    </div>
+  );
 };
 
 export default Customers;

@@ -19,14 +19,29 @@ import {
 } from "../redux/slices/modalSlice";
 import { storeUserInfo } from "../redux/slices/userSlice";
 import { ThemeProvider } from "@mui/material";
+import useCategoryBrandForm from "../hooks/useCategoryBrandForm";
+import useUserForm from "../hooks/useUserForm";
+import useProductForm from "../hooks/useProductForm";
 
 export default function Body() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const confirmState = useSelector((store) => store?.modal?.isConfirmed);
   const contentType = useSelector((store) => store?.modal?.contentType);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+
+  useCategoryBrandForm();
+  useUserForm();
+  useProductForm();
+
+  useEffect(() => {
+    if (confirmState && contentType === MODAL_CONTENT_TYPES.logout) {
+      navigate("/");
+      dispatch(storeUserInfo({}));
+      dispatch(toggleModalConfirmState(false));
+    }
+  }, [confirmState]);
 
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
@@ -39,14 +54,6 @@ export default function Body() {
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-
-  useEffect(() => {
-    if (confirmState && contentType === MODAL_CONTENT_TYPES.logout) {
-      navigate("/");
-      dispatch(storeUserInfo({}));
-      dispatch(toggleModalConfirmState(false));
-    }
-  }, [confirmState]);
 
   const handleCloseUserMenu = (setting) => {
     setAnchorElUser(null);
@@ -81,7 +88,6 @@ export default function Body() {
           handleOpenUserMenu={handleOpenUserMenu}
           isDrawerOpen={isDrawerOpen}
         />
-
         {/* sidebar */}
         <Sidebar
           handleDrawerClose={handleDrawerClose}

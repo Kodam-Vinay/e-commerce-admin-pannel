@@ -10,6 +10,7 @@ import { Avatar } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CustomButton from "../../utils/CustomButton";
 import { CLOUDINARY_IMAGE_ACCESS_URL, columns } from "../../utils/constants";
+import Loader from "../Loader";
 
 function createData(
   s_no,
@@ -42,6 +43,8 @@ export default function UsersTable({
   page,
   rowsPerPage,
   handleDeleteUser,
+  loading,
+  notFoundText,
 }) {
   const rows = data?.map((each, index) =>
     createData(
@@ -71,7 +74,7 @@ export default function UsersTable({
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+    <Paper sx={{ width: "100%", overflowX: "auto" }}>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -79,7 +82,7 @@ export default function UsersTable({
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={column.align}
+                  align={column.align ? column.align : "center"}
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
@@ -88,22 +91,31 @@ export default function UsersTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row, index) => {
-                return (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={columns?.length} align="center">
+                  <Loader />
+                </TableCell>
+              </TableRow>
+            ) : rows?.length > 0 ? (
+              rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => (
                   <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column?.id === "image" ? (
+                        <TableCell
+                          key={column.id}
+                          align={column.align ? column.align : "center"}
+                        >
+                          {column.id === columns[4].id ? (
                             <Avatar
                               src={CLOUDINARY_IMAGE_ACCESS_URL + value}
                               alt={value}
                               key={row?.s_no}
                             />
-                          ) : column?.id === "delete" ? (
+                          ) : column.id === columns[8].id ? (
                             <CustomButton
                               onClick={() => handleOnClickDeleteUser(row)}
                               label={
@@ -115,7 +127,7 @@ export default function UsersTable({
                                   }}
                                 />
                               }
-                              className="w-14 max-w-14"
+                              className="w-10 max-w-10 bg-red-500 hover:bg-red-400"
                               key={row?.s_no}
                             />
                           ) : (
@@ -125,15 +137,21 @@ export default function UsersTable({
                       );
                     })}
                   </TableRow>
-                );
-              })}
+                ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns?.length} align="center">
+                  No {notFoundText} found
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={rows.length}
+        count={rows?.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

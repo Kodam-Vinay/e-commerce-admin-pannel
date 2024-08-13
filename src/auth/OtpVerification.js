@@ -144,13 +144,13 @@ const OtpVerification = () => {
                   }}
                   label="Submit"
                   type={"submit"}
-                  className={"text-xs"}
+                  className={"text-xs w-full max-w-96 h-10"}
                 />
                 <CustomButton
                   loading={isSendOtpClicked && loading}
                   label="Send Otp"
                   type={"button"}
-                  className={"text-xs"}
+                  className={"text-xs w-full max-w-96 h-10"}
                   onClick={() => {
                     handleSendOtp();
                     setIsSubmitClicked(false);

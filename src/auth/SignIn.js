@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { postRequest } from "../api/apiCalls";
 import { storeUserInfo } from "../redux/slices/userSlice";
 import { useDispatch } from "react-redux";
-import AuthForm from "../components/AuthForm";
+import AuthForm from "../components/forms/AuthForm";
+import { ROUTING_PATHS } from "../utils/constants";
 
 const SignIn = () => {
   const [isError, setIsError] = useState(false);
@@ -35,18 +36,18 @@ const SignIn = () => {
       password,
     };
     setLoading(true);
-    const data = await postRequest({
+    const res = await postRequest({
       setIsError,
       setError,
       details: userDetails,
       apiUrl: "shop-admin/login",
     });
-    if (data?.status) {
-      if (data?.data?.userDetails?.verified) {
-        dispatch(storeUserInfo(data?.data?.userDetails));
+    if (res?.status) {
+      if (res?.data?.userDetails?.verified) {
+        dispatch(storeUserInfo(res?.data?.userDetails));
         navigate("/");
       } else {
-        dispatch(storeUserInfo(data?.data?.userDetails));
+        dispatch(storeUserInfo(res?.data?.userDetails));
         navigate("/verify-otp");
       }
     }
@@ -61,7 +62,7 @@ const SignIn = () => {
       >
         <img src={bgImage} alt="bg_image" className="animate-pulse" />
       </div>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 w-full lg:w-1/2 z-20">
+      <div className="flex flex-col justify-center px-6 py-12 lg:px-8 w-full lg:w-1/2 z-20">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="md:mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign In to your account
@@ -78,14 +79,24 @@ const SignIn = () => {
               isError={isError}
               loading={loading}
               handleForm={handleSignIn}
+              setIsError={setIsError}
             />
             <p className="mt-10 text-center text-sm text-gray-500">
               Aleready have an account?
               <Link
-                to="/sign-up"
+                to={ROUTING_PATHS.signup}
                 className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"
               >
                 Register Here
+              </Link>
+            </p>
+            <p className="mt-2 text-center text-sm text-gray-500">
+              Didn't Remember Your Password?
+              <Link
+                to={ROUTING_PATHS.forgetpassword}
+                className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"
+              >
+                Forget Password
               </Link>
             </p>
           </div>

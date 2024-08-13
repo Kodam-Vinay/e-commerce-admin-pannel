@@ -1,0 +1,10 @@
+/* product carousel */
+.swiper {
+  width: 120px;
+  height: 96px;
+}
+
+.swiper-slide {
+  width: 100%;
+  cursor: pointer;
+}

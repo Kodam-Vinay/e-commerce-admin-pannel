@@ -3,6 +3,7 @@ import {
   Outlet,
   RouterProvider,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -22,6 +23,12 @@ import ErrorPage from "../pages/ErrorPage";
 import Sellers from "../pages/Sellers";
 import GlobalModal from "../utils/modal/GlobalModal";
 import { ROUTING_PATHS } from "../utils/constants";
+import AdminProtectedRoute from "../protectedRoutes/AdminProtectedRoute";
+import SellerProtectedRoute from "../protectedRoutes/SellerProtectedRoute";
+import ForgetPassword from "../auth/ForgetPassword";
+import Categories from "../pages/Categories";
+import Brands from "../pages/Brands";
+import SubCategories from "../pages/SubCategories";
 
 const RenderLayout = () => {
   const location = useLocation();
@@ -62,7 +69,9 @@ const AppRoutes = () => {
               path: ROUTING_PATHS.users,
               element: (
                 <HomeProtectedRoute>
-                  <Customers />
+                  <AdminProtectedRoute>
+                    <Customers />
+                  </AdminProtectedRoute>
                 </HomeProtectedRoute>
               ),
             },
@@ -70,7 +79,9 @@ const AppRoutes = () => {
               path: ROUTING_PATHS.sellers,
               element: (
                 <HomeProtectedRoute>
-                  <Sellers />
+                  <AdminProtectedRoute>
+                    <Sellers />
+                  </AdminProtectedRoute>
                 </HomeProtectedRoute>
               ),
             },
@@ -78,7 +89,9 @@ const AppRoutes = () => {
               path: ROUTING_PATHS.products,
               element: (
                 <HomeProtectedRoute>
-                  <Products />
+                  <SellerProtectedRoute>
+                    <Products />
+                  </SellerProtectedRoute>
                 </HomeProtectedRoute>
               ),
             },
@@ -87,6 +100,30 @@ const AppRoutes = () => {
               element: (
                 <HomeProtectedRoute>
                   <Profile />
+                </HomeProtectedRoute>
+              ),
+            },
+            {
+              path: ROUTING_PATHS.categories,
+              element: (
+                <HomeProtectedRoute>
+                  <Categories />
+                </HomeProtectedRoute>
+              ),
+            },
+            {
+              path: ROUTING_PATHS.subcategories,
+              element: (
+                <HomeProtectedRoute>
+                  <SubCategories />
+                </HomeProtectedRoute>
+              ),
+            },
+            {
+              path: ROUTING_PATHS.brands,
+              element: (
+                <HomeProtectedRoute>
+                  <Brands />
                 </HomeProtectedRoute>
               ),
             },
@@ -115,6 +152,10 @@ const AppRoutes = () => {
               <OtpVerification />
             </VerificationProtectedRoute>
           ),
+        },
+        {
+          path: ROUTING_PATHS.forgetpassword,
+          element: <ForgetPassword />,
         },
       ],
     },

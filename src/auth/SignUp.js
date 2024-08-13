@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import bgImage from "../assets/bgImage.png";
-import CustomInput from "../utils/CustomInput";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import CustomButton from "../utils/CustomButton";
 import { Link, useNavigate } from "react-router-dom";
 import { postRequest } from "../api/apiCalls";
 import { ROUTING_PATHS, USER_ROLES } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { storeUserInfo } from "../redux/slices/userSlice";
-import AuthForm from "../components/AuthForm";
+import AuthForm from "../components/forms/AuthForm";
 
 const SignUp = () => {
   const [error, setError] = useState("");
@@ -49,15 +46,15 @@ const SignUp = () => {
       confirm_password: confirmPassword,
     };
     setLoading(true);
-    const data = await postRequest({
+    const res = await postRequest({
       setIsError,
       setError,
       details: userDetails,
       apiUrl: "shop-admin/register",
       path: ROUTING_PATHS.signup,
     });
-    if (data?.status) {
-      dispatch(storeUserInfo(data?.data?.userDetails));
+    if (res?.status) {
+      dispatch(storeUserInfo(res?.data?.userDetails));
       navigate("/verify-otp");
     }
     setLoading(false);
@@ -67,11 +64,7 @@ const SignUp = () => {
       <div
         className={`w-full md:w-1/2 h-1/2 md:h-full bg-cover bg-center absolute top-0 bottom-0 md:relative flex flex-col justify-center z-0 left-0 right-0`}
       >
-        <img
-          src={bgImage}
-          alt="bg_image"
-          className="lg:h-screen animate-pulse"
-        />
+        <img src={bgImage} alt="bg_image" className="animate-pulse" />
       </div>
       <div className="flex flex-col justify-center px-6 py-12 lg:px-8 w-full lg:w-1/2 z-20">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -114,7 +107,7 @@ const SignUp = () => {
             >
               Not a member?
               <Link
-                to="/sign-in"
+                to={ROUTING_PATHS.signin}
                 className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"
               >
                 Login Here

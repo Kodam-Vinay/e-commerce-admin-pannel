@@ -19,14 +19,14 @@ const InputModal = () => {
           justifyContent: "space-between",
         }}
       >
-        <DialogTitle>Add User</DialogTitle>
+        <DialogTitle>{content?.title}</DialogTitle>
         <DialogActions>
           <Button
             variant="plain"
             color="neutral"
             onClick={() => dispatch(toggleModalState(false))}
             sx={{
-              backgroundColor: "white",
+              backgroundColor: "transparent",
               color: "black",
               "&:hover": {
                 backgroundColor: "#f20a0a",
@@ -41,7 +41,10 @@ const InputModal = () => {
 
       <DialogContent
         sx={{
-          padding: 2,
+          padding: {
+            xs: 0,
+            sm: 2,
+          },
         }}
       >
         {content?.form}

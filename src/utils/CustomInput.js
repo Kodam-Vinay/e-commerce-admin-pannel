@@ -11,6 +11,10 @@ export default function CustomInput({
   className,
   disabled,
   containerClassName,
+  accept,
+  pattern,
+  inputMode,
+  list,
 }) {
   return (
     <div className={`max-w-96 ${containerClassName}`}>
@@ -31,6 +35,10 @@ export default function CustomInput({
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
+          accept={accept}
+          pattern={pattern}
+          inputMode={inputMode}
+          list={list}
           className={`w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline ${
             error ? "border-red-500" : "border-gray-300"
           } ${className}`}

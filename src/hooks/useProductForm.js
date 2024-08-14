@@ -178,19 +178,24 @@ export default function useProductForm() {
       setLoading(false);
     };
 
-    if (
-      activePath === ROUTING_PATHS.products &&
-      subCategory?.toString().length > 0
-    ) {
-      getBrandsListData();
-    }
+    const timer = setTimeout(() => {
+      if (
+        activePath === ROUTING_PATHS.products &&
+        subCategory?.toString().length > 0
+      ) {
+        getBrandsListData();
+      }
 
-    if (
-      activePath === ROUTING_PATHS.products &&
-      category?.toString().length > 0
-    ) {
-      getSubCategoriesData();
-    }
+      if (
+        activePath === ROUTING_PATHS.products &&
+        category?.toString().length > 0
+      ) {
+        getSubCategoriesData();
+      }
+    }, 2000);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [category, subCategory, activePath]);
 
   useEffect(() => {

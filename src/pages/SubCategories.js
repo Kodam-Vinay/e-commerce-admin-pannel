@@ -23,7 +23,7 @@ const SubCategories = () => {
   const [isError, setIsError] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [brandDetails, setBrandDetails] = useState(null);
+  const [subCategoryDetails, setSubCategoryDetails] = useState(null);
   const userDetails = useSelector(
     (store) => store?.persistSliceReducer?.user?.userInfo
   );
@@ -59,7 +59,7 @@ const SubCategories = () => {
   useEffect(() => {
     const deleteCategory = async () => {
       const sendSubCategoryId = {
-        sub_category_id: brandDetails?.category_brand_id,
+        sub_category_id: subCategoryDetails?.category_brand_id,
       };
       const res = await deleteRequest({
         setError: setError,
@@ -85,7 +85,7 @@ const SubCategories = () => {
   }, [confirmState]);
 
   const handleDeleteCategoryBrand = (details) => {
-    setBrandDetails(details);
+    setSubCategoryDetails(details);
     dispatch(toggleModalState(true));
     dispatch(storeModalContentType(MODAL_CONTENT_TYPES.deleteSubCategory));
     dispatch(

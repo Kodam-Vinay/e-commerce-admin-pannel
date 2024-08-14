@@ -176,7 +176,7 @@ export default function useCategoryBrandForm() {
       getCatgoriesData();
       getBrandsListData();
     }
-  }, []);
+  }, [activePath]);
 
   useEffect(() => {
     setName("");

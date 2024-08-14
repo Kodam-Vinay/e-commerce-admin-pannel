@@ -11,6 +11,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import LogoDevIcon from "@mui/icons-material/LogoDev";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -110,8 +111,12 @@ const Header = ({
               activePath === SIDEBAR_LINKS.subcategories.path ||
               activePath === SIDEBAR_LINKS.brands.path) && (
               <CustomButton
-                label="Add +"
-                className={"hidden mxs:block border hover:border-0 w-28"}
+                label={isMobile || size?.width < 400 ? <AddIcon /> : "Add +"}
+                className={`border hover:border-0 ${
+                  isMobile || size?.width < 400
+                    ? "w-10 pl-4 pb-2 -mr-5"
+                    : "w-28"
+                }`}
                 onClick={handleAddDetails}
               />
             )}
@@ -123,7 +128,7 @@ const Header = ({
                   vxs: isDrawerOpen ? -3 : 2,
                   xs: 2,
                 },
-                marginRight: 2,
+                marginRight: isMobile || size?.width < 400 ? 0 : 2,
               }}
             >
               <IconButton
@@ -212,8 +217,12 @@ const Header = ({
               activePath === SIDEBAR_LINKS.subcategories.path ||
               activePath === SIDEBAR_LINKS.brands.path) && (
               <CustomButton
-                label="Add +"
-                className={"hidden mxs:block border hover:border-0 w-28"}
+                label={isMobile || size?.width < 400 ? <AddIcon /> : "Add +"}
+                className={`border hover:border-0 ${
+                  isMobile || size?.width < 400
+                    ? "w-10 pl-4 pb-2 -mr-5"
+                    : "w-28"
+                }`}
                 onClick={handleAddDetails}
               />
             )}
@@ -225,7 +234,7 @@ const Header = ({
                   vxs: isDrawerOpen ? -3 : 2,
                   xs: 2,
                 },
-                marginRight: 2,
+                marginRight: isMobile || size?.width < 400 ? 0 : 2,
               }}
             >
               <IconButton

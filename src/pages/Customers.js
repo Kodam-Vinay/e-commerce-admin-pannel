@@ -88,7 +88,7 @@ const Customers = () => {
   const filterUsers = filterUsersFunc(data, USER_ROLES[2].role);
 
   return (
-    <div className="h-full w-full m-0">
+    <div className="h-full w-full m-0 overflow-auto p-5">
       <h1 className="mb-4 text-lg font-bold">{SIDEBAR_LINKS.users.name}</h1>
       <UsersTable
         data={filterUsers}

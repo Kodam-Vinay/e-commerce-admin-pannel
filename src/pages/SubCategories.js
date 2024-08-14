@@ -7,7 +7,6 @@ import {
   storeToastError,
   storeToastSuccess,
 } from "../utils/constants";
-import Loader from "../components/Loader";
 import {
   storeModalContent,
   storeModalContentType,

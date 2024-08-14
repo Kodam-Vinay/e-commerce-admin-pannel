@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { storeUserInfo } from "../redux/slices/userSlice";
 import { storeToastError, storeToastSuccess } from "../utils/constants";
+import useDeviceCheck from "../hooks/useDeviceCheck";
 
 const OtpVerification = () => {
   const [isError, setIsError] = useState(false);
@@ -21,6 +22,7 @@ const OtpVerification = () => {
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isMobile = useDeviceCheck();
 
   useEffect(() => {
     if (joinOtp.length === 4) {
@@ -99,7 +101,9 @@ const OtpVerification = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-full items-center">
+    <div
+      className={`flex flex-col md:flex-row ${isMobile ? "h-[90%]" : "h-full"}`}
+    >
       <div
         className={`w-full md:w-1/2 h-1/2 md:h-full bg-cover bg-center absolute top-0 bottom-0 md:relative flex flex-col justify-center z-0`}
       >
@@ -109,7 +113,7 @@ const OtpVerification = () => {
           className="lg:h-screen animate-pulse"
         />
       </div>
-      <div className="flex max-w-96 flex-1 flex-col justify-center px-6 py-12 lg:px-8 lg:w-1/2 z-20">
+      <div className="flex max-w-96 mt-auto sm:mt-0 flex-1 flex-col justify-center px-6 py-12 lg:px-8 lg:w-1/2 z-20">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="md:mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Verify Your Account

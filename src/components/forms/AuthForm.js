@@ -11,6 +11,7 @@ import {
 } from "../../utils/constants";
 import { ThreeCircles } from "react-loader-spinner";
 import { useEffect } from "react";
+import useDeviceCheck from "../../hooks/useDeviceCheck";
 
 const AuthForm = ({
   isError,
@@ -45,6 +46,7 @@ const AuthForm = ({
   checkAnyChangesMade,
   setIsError,
 }) => {
+  const isMobile = useDeviceCheck();
   useEffect(() => {
     setIsError(false);
   }, []);
@@ -64,9 +66,13 @@ const AuthForm = ({
   return (
     <form
       onSubmit={handleForm}
-      className={`w-full self-center ${
-        activePath === ROUTING_PATHS.profile ? "pb-4" : "max-w-96 mx-auto"
-      }`}
+      className={`w-full self-center overflow-y-auto ${
+        activePath === ROUTING_PATHS.profile && isMobile
+          ? "pb-14"
+          : activePath === ROUTING_PATHS.profile && !isMobile
+          ? "pb-4"
+          : "max-w-96 mx-auto"
+      } `}
     >
       {/* profile logo */}
       {activePath === ROUTING_PATHS.profile && (
@@ -127,21 +133,21 @@ const AuthForm = ({
       {/* name, user_id */}
       {activePath !== ROUTING_PATHS.signin && (
         <div
-          className={`flex ${
+          className={`flex w-full mx-auto ${
             activePath === ROUTING_PATHS.profile
               ? "flex-col items-center sm:items-start sm:flex-row my-2 space-y-2 sm:space-y-0 sm:space-x-2 sm:justify-center"
-              : "flex-row space-x-2 justify-between"
+              : "flex-row justify-between space-x-2  max-w-96"
           }`}
         >
           <CustomInput
             containerClassName={`${
-              activePath === ROUTING_PATHS.profile ? "mx-0 w-full" : "mx-auto"
+              activePath === ROUTING_PATHS.profile ? "mx-0 w-full" : ""
             }`}
             label="Name"
             className={`${
               activePath === ROUTING_PATHS.profile || isModalOpen
                 ? "w-full"
-                : "w-full md:-ml-2"
+                : `w-full`
             }`}
             type="text"
             error={isError && !name && "Name is Required"}
@@ -153,7 +159,7 @@ const AuthForm = ({
 
           <CustomInput
             containerClassName={`${
-              activePath === ROUTING_PATHS.profile ? "mx-0 w-full" : "mx-auto"
+              activePath === ROUTING_PATHS.profile ? "mx-0 w-full" : ""
             }`}
             label="User Id"
             className={`w-full`}
@@ -162,6 +168,7 @@ const AuthForm = ({
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             required
+            placeholder={"User Id"}
           />
         </div>
       )}

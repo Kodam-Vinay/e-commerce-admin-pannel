@@ -74,10 +74,7 @@ export default function Body() {
 
   return (
     <ThemeProvider theme={customTheme}>
-      <Box
-        sx={{ display: "flex", height: "94%", marginLeft: 0 }}
-        className="h-full"
-      >
+      <Box sx={{ display: "flex", marginLeft: 0 }} className="h-full">
         <CssBaseline />
 
         {/* header */}

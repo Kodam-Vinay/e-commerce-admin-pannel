@@ -6,25 +6,24 @@ const useDeviceResize = () => {
     width: window.innerWidth,
   });
 
-  const debounce = (func, delay) => {
-    let timeout;
-    return (...args) => {
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        func(...args);
-      }, delay);
+  const changeDisplayHeightAndWidth = useCallback(() => {
+    const debounce = (func, delay) => {
+      let timeout;
+      return (...args) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          func(...args);
+        }, delay);
+      };
     };
-  };
 
-  const changeDisplayHeightAndWidth = useCallback(
     debounce(() => {
       setSize({
         height: window.innerHeight,
         width: window.innerWidth,
       });
-    }, 300), // Adjust the debounce delay as needed
-    []
-  );
+    }, 300)();
+  }, []);
 
   useEffect(() => {
     window.addEventListener("resize", changeDisplayHeightAndWidth);

@@ -9,7 +9,6 @@ import "../App.css";
 import { EffectCoverflow, Autoplay } from "swiper/modules";
 import { CLOUDINARY_IMAGE_ACCESS_URL } from "../utils/constants";
 import { Link } from "react-router-dom";
-import { Avatar } from "@mui/material";
 
 export default function ProductCarousel({ imagesList }) {
   return (

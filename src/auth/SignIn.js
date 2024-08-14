@@ -6,6 +6,7 @@ import { storeUserInfo } from "../redux/slices/userSlice";
 import { useDispatch } from "react-redux";
 import AuthForm from "../components/forms/AuthForm";
 import { ROUTING_PATHS } from "../utils/constants";
+import useDeviceCheck from "../hooks/useDeviceCheck";
 
 const SignIn = () => {
   const [isError, setIsError] = useState(false);
@@ -16,6 +17,7 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isMobile = useDeviceCheck();
 
   useEffect(() => {
     if (email && password) {
@@ -56,13 +58,15 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-full">
+    <div
+      className={`flex flex-col md:flex-row ${isMobile ? "h-[90%]" : "h-full"}`}
+    >
       <div
         className={`w-full md:w-1/2 h-1/2 md:h-full bg-cover bg-center absolute top-0 bottom-0 md:relative flex flex-col justify-center z-0 left-0 right-0`}
       >
         <img src={bgImage} alt="bg_image" className="animate-pulse" />
       </div>
-      <div className="flex flex-col justify-center px-6 py-12 lg:px-8 w-full lg:w-1/2 z-20">
+      <div className="flex flex-col mt-auto sm:mt-0 justify-center px-6 py-12 lg:px-8 w-full lg:w-1/2 z-20">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="md:mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Sign In to your account

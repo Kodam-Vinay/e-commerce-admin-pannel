@@ -30,6 +30,7 @@ import {
   storeModalContentType,
   toggleModalState,
 } from "../redux/slices/modalSlice";
+import useDeviceCheck from "../hooks/useDeviceCheck";
 
 const Header = ({
   isDrawerOpen,
@@ -67,15 +68,17 @@ const Header = ({
   };
 
   const size = useDeviceResize();
+  const isMobile = useDeviceCheck();
 
   return (
-    <>
-      {size?.width < 300 ? (
+    <div>
+      {size?.width < 300 || isMobile ? (
         <MobileAppBar
           position="fixed"
           open={isDrawerOpen}
           sx={{
             backgroundColor: "#5046e5",
+            overflow: "hidden",
           }}
           className="sm:px-1"
         >
@@ -177,6 +180,7 @@ const Header = ({
           open={isDrawerOpen}
           sx={{
             backgroundColor: "#5046e5",
+            overflow: "hidden",
           }}
           className="sm:px-1"
         >
@@ -273,7 +277,7 @@ const Header = ({
           </Toolbar>
         </AppBar>
       )}
-    </>
+    </div>
   );
 };
 

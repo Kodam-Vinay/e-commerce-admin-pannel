@@ -74,15 +74,15 @@ export default function UsersTable({
   };
 
   return (
-    <Paper sx={{ width: "100%", overflowX: "auto" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+    <Paper sx={{ minWidth: 740, overflowX: "auto" }}>
+      <TableContainer sx={{ maxHeight: 440, overflowX: "auto" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={column.align ? column.align : "center"}
+                  align={column.align || "center"}
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
@@ -107,15 +107,15 @@ export default function UsersTable({
                       return (
                         <TableCell
                           key={column.id}
-                          align={column.align ? column.align : "center"}
+                          align={column.align || "center"}
                         >
-                          {column.id === columns[4].id ? (
+                          {column.id === "image" ? (
                             <Avatar
                               src={CLOUDINARY_IMAGE_ACCESS_URL + value}
                               alt={value}
                               key={row?.s_no}
                             />
-                          ) : column.id === columns[8].id ? (
+                          ) : column.id === "delete" ? (
                             <CustomButton
                               onClick={() => handleOnClickDeleteUser(row)}
                               label={

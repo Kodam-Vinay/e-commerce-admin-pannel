@@ -9,11 +9,14 @@ import { MODAL_CONTENT_TYPES } from "../constants";
 import ConfirmationModal from "./ConfirmationModal";
 import zIndex from "@mui/material/styles/zIndex";
 import InputModal from "./InputModal";
+import useDeviceCheck from "../../hooks/useDeviceCheck";
+import useDeviceResize from "../../hooks/useDeviceResize";
 
 export default function GlobalModal() {
   const contentType = useSelector((store) => store?.modal?.contentType);
-
+  const isMobile = useDeviceCheck();
   const dispatch = useDispatch();
+  const size = useDeviceResize();
   const isModalOpen = useSelector((store) => store?.modal?.isModalOpen);
   const paths = [
     MODAL_CONTENT_TYPES.deleteUser,
@@ -35,6 +38,7 @@ export default function GlobalModal() {
         border: paths?.includes(contentType)
           ? "1px solid red"
           : "1px solid #5046e5",
+        width: "100%",
       }}
     >
       <ModalDialog
@@ -42,6 +46,11 @@ export default function GlobalModal() {
         role="alertdialog"
         sx={{
           zIndex: zIndex,
+          width: paths?.includes(contentType)
+            ? "400px"
+            : isMobile || size?.width < "500px"
+            ? "100%"
+            : "500px",
         }}
       >
         {paths?.includes(contentType) ? <ConfirmationModal /> : <InputModal />}

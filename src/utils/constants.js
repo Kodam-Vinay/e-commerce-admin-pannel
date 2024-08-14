@@ -167,7 +167,7 @@ export const SIDEBAR_LINKS = {
   },
 };
 
-export const API_URL = "http://localhost:8000/api/";
+export const API_URL = process.env.REACT_APP_E_COMMERCE_BACKEND_URL;
 
 export const storeToastError = ({ errorMessage }) => {
   toast.error(errorMessage, {
@@ -208,14 +208,15 @@ export const filterUsersFunc = (list, role) => {
   return filterList?.length > 0 ? filterList : [];
 };
 
+// table
 export const columns = [
-  { id: "s_no", label: "S.NO", minWidth: 5 },
-  { id: "name", label: "Name", minWidth: 50 },
+  { id: "s_no", label: "S.NO", minWidth: 30 },
+  { id: "name", label: "Name", minWidth: 100 },
   { id: "email", label: "Email", minWidth: 170 },
   {
     id: "role",
     label: "Role",
-    minWidth: 10,
+    minWidth: 70,
   },
   {
     id: "image",
@@ -225,17 +226,17 @@ export const columns = [
   {
     id: "address",
     label: "Address",
-    minWidth: 80,
+    minWidth: 140,
   },
   {
     id: "is_premium_user",
     label: "Is Premium User",
-    minWidth: 30,
+    minWidth: 140,
   },
   {
     id: "verified",
     label: "Verified",
-    minWidth: 30,
+    minWidth: 70,
   },
   {
     id: "delete",
@@ -245,40 +246,41 @@ export const columns = [
 ];
 
 export const categoriesBrandColumns = [
-  { id: "s_no", label: "S.NO", minWidth: 5 },
-  { id: "name", label: "Name", minWidth: 10 },
-  { id: "status", label: "Status", minWidth: 10 },
+  { id: "s_no", label: "S.NO", minWidth: 30 },
+  { id: "name", label: "Name", minWidth: 200 },
+  { id: "status", label: "Status", minWidth: 70 },
   { id: "update", label: "", minWidth: 5 },
   { id: "delete", label: "", minWidth: 5 },
 ];
 
 export const subCategoriesColumns = [
-  { id: "s_no", label: "S.NO", minWidth: 5 },
-  { id: "name", label: "Name", minWidth: 10 },
-  { id: "status", label: "Status", minWidth: 10 },
-  { id: "category", label: "Category", minWidth: 10 },
-  { id: "brands", label: "Brands", minWidth: 10 },
-  { id: "update", label: "", minWidth: 5 },
-  { id: "delete", label: "", minWidth: 5 },
+  { id: "s_no", label: "S.NO", minWidth: 30 },
+  { id: "name", label: "Name", minWidth: 150 },
+  { id: "status", label: "Status", minWidth: 70 },
+  { id: "category", label: "Category", minWidth: 200 },
+  { id: "brands", label: "Brands", minWidth: 180 },
+  { id: "update", label: "", minWidth: 10 },
+  { id: "delete", label: "", minWidth: 10 },
 ];
 
 export const productColumns = [
-  { id: "s_no", label: "S.NO", minWidth: 5 },
-  { id: "name", label: "Name", minWidth: 10 },
-  { id: "category", label: "Category", minWidth: 10 },
-  { id: "sub_category", label: "Sub Category", minWidth: 10 },
-  { id: "brand", label: "Brand", minWidth: 10 },
-  { id: "features", label: "Features", minWidth: 10 },
-  { id: "price", label: "Price", minWidth: 10 },
-  { id: "description", label: "Description", minWidth: 10 },
-  { id: "stock", label: "Stock", minWidth: 10 },
-  { id: "specifications", label: "Specifications", minWidth: 10 },
-  { id: "images", label: "Images", minWidth: 10 },
-  { id: "is_premium", label: "Is Premium", minWidth: 5 },
-  { id: "update", label: "", minWidth: 5 },
-  { id: "delete", label: "", minWidth: 5 },
+  { id: "s_no", label: "S.NO", minWidth: 30 },
+  { id: "name", label: "Name", minWidth: 150 },
+  { id: "category", label: "Category", minWidth: 180 },
+  { id: "sub_category", label: "Sub Category", minWidth: 180 },
+  { id: "brand", label: "Brand", minWidth: 150 },
+  { id: "features", label: "Features", minWidth: 180 },
+  { id: "price", label: "Price", minWidth: 150 },
+  { id: "description", label: "Description", minWidth: 200 },
+  { id: "stock", label: "Stock", minWidth: 150 },
+  { id: "specifications", label: "Specifications", minWidth: 150 },
+  { id: "images", label: "Images", minWidth: 200 },
+  { id: "is_premium", label: "Is Premium", minWidth: 50 },
+  { id: "update", label: "", minWidth: 10 },
+  { id: "delete", label: "", minWidth: 10 },
 ];
 
+//modal content types
 export const MODAL_CONTENT_TYPES = {
   deleteUser: "delete_user",
   addBuyer: "add_buyer",
@@ -298,6 +300,7 @@ export const MODAL_CONTENT_TYPES = {
   deleteProduct: "delete_product",
 };
 
+// theme mui
 export const customTheme = createTheme({
   breakpoints: {
     values: {

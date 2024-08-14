@@ -3,7 +3,6 @@ import {
   Outlet,
   RouterProvider,
   useLocation,
-  useNavigate,
 } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";

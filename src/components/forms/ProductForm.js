@@ -14,6 +14,7 @@ import {
   CLOUDINARY_IMAGE_ACCESS_URL,
   MODAL_CONTENT_TYPES,
 } from "../../utils/constants";
+import useDeviceCheck from "../../hooks/useDeviceCheck";
 
 const ProductForm = ({
   isError,
@@ -139,11 +140,14 @@ const ProductForm = ({
       return;
     }
   };
+  const isMobile = useDeviceCheck();
 
   return (
     <form
       onSubmit={handleAddUpdateProduct}
-      className={`w-full self-center max-w-96 mx-auto`}
+      className={`w-full self-center max-w-96 mx-auto space-y-3 ${
+        isMobile ? "pb-4" : ""
+      }`}
     >
       {/* name, price */}
       <div
@@ -151,6 +155,7 @@ const ProductForm = ({
       >
         <CustomInput
           label="Name"
+          containerClassName={"w-full max-w-96"}
           className={`w-full`}
           type="text"
           error={isError && !name && "Name is required"}
@@ -162,6 +167,7 @@ const ProductForm = ({
 
         <CustomInput
           label="Price"
+          containerClassName={"w-full max-w-96"}
           className={`w-full`}
           type="tel"
           pattern="[0-9]*"
@@ -182,7 +188,7 @@ const ProductForm = ({
         className={`flex flex-col items-center sm:items-start sm:flex-row my-2 space-y-2 sm:space-y-0 sm:space-x-2 sm:justify-center`}
       >
         <CustomInput
-          containerClassName="mx-auto"
+          containerClassName={"w-full max-w-96"}
           label={"Description"}
           className="w-full"
           type="text"
@@ -193,7 +199,7 @@ const ProductForm = ({
           placeholder={"Description"}
         />
         <CustomInput
-          containerClassName="mx-auto"
+          containerClassName={"w-full max-w-96"}
           label={"Features"}
           className="w-full"
           type="text"
@@ -211,6 +217,7 @@ const ProductForm = ({
       >
         <CustomInput
           label={"Stock Availability"}
+          containerClassName={"w-full max-w-96"}
           className="w-full"
           error={
             isError &&
@@ -232,6 +239,7 @@ const ProductForm = ({
         />
         <CustomInput
           label={"Stock Location"}
+          containerClassName={"w-full max-w-96"}
           className="w-full"
           type="text"
           error={
@@ -255,7 +263,7 @@ const ProductForm = ({
       <div
         className={`flex flex-col items-center sm:items-start sm:flex-row my-2 space-y-2 sm:space-y-0 sm:space-x-2 sm:justify-center`}
       >
-        <div>
+        <div className={"w-full max-w-96"}>
           <CustomInput
             className={`w-full ${
               categoriesList?.length === 0 ? "bg-opacity-70" : ""
@@ -279,7 +287,7 @@ const ProductForm = ({
           </datalist>
         </div>
 
-        <div>
+        <div className={"w-full max-w-96"}>
           <CustomInput
             className={`w-full ${
               subCategoriesList?.length === 0 ? "bg-opacity-50" : ""
@@ -307,7 +315,7 @@ const ProductForm = ({
       <div
         className={`flex flex-col items-center sm:items-start sm:flex-row my-2 space-y-2 sm:space-y-0 sm:space-x-2 sm:justify-center`}
       >
-        <div className="w-1/2">
+        <div className="w-full">
           <CustomInput
             className={`w-full sm:max-w-full ${
               brandsList?.length === 0 ? "bg-opacity-50" : ""
@@ -330,7 +338,7 @@ const ProductForm = ({
             ))}
           </datalist>
         </div>
-        <div className="w-1/2">
+        <div className="w-full max-w-96 mx-auto">
           <label
             htmlFor="premium"
             className="block text-sm font-medium leading-6 text-gray-900"
@@ -358,6 +366,7 @@ const ProductForm = ({
       >
         <CustomInput
           label={"Weight"}
+          containerClassName={"w-full max-w-96"}
           className="w-full"
           value={specifications?.weight}
           type="tel"
@@ -376,6 +385,7 @@ const ProductForm = ({
 
         <CustomInput
           label={"Battery Life"}
+          containerClassName={"w-full max-w-96"}
           className="w-full"
           value={specifications?.battery_life}
           type="tel"
@@ -404,6 +414,7 @@ const ProductForm = ({
       >
         <CustomInput
           type="text"
+          containerClassName={"w-full max-w-96"}
           label={"Dimensions"}
           className="w-full"
           value={specifications?.dimensions}
@@ -422,6 +433,7 @@ const ProductForm = ({
 
         <CustomInput
           type="text"
+          containerClassName={"w-full max-w-96"}
           label={"Color"}
           className="w-full"
           value={specifications?.color}
@@ -438,7 +450,7 @@ const ProductForm = ({
       </div>
 
       {/* image */}
-      <div className="mx-auto max-w-[220px] sm:w-full sm:max-w-full">
+      <div className={"w-full max-w-96"}>
         <label
           htmlFor={"images"}
           className="block text-sm font-medium leading-6 text-gray-900"
@@ -487,7 +499,7 @@ const ProductForm = ({
           )}
       </div>
 
-      <div className="flex flex-col max-w-[220px] sm:w-full sm:max-w-full mx-auto">
+      <div className="flex flex-col max-w-96">
         <div className="flex items-center self-end space-x-1">
           <CustomButton
             loading={loading}
@@ -520,7 +532,7 @@ const ProductForm = ({
 
       {contentType === MODAL_CONTENT_TYPES.updateProduct ? (
         compareImagesLength && cloudinaryImagesList?.length > 0 ? (
-          <div className="mx-auto max-w-full xs:w-[85%] sm:w-full flex flex-wrap">
+          <div className={"w-full max-w-96 flex flex-wrap my-2"}>
             {cloudinaryImagesList?.map((eachImage) => (
               <div
                 key={eachImage?.image_id}
@@ -541,7 +553,7 @@ const ProductForm = ({
             ))}
           </div>
         ) : (
-          <div className="mx-auto w-full xs:w-[85%] sm:w-full flex flex-wrap">
+          <div className={"w-full max-w-96 flex flex-wrap my-2"}>
             {dbImages?.map((eachImage) => (
               <div
                 key={eachImage?.image_id}
@@ -568,7 +580,7 @@ const ProductForm = ({
 
       {cloudinaryImagesList?.length > 0 &&
         contentType === MODAL_CONTENT_TYPES.addProduct && (
-          <div className="mx-auto max-w-full xs:w-[85%] sm:w-full flex flex-wrap">
+          <div className={"w-full max-w-96 flex flex-wrap my-2"}>
             {cloudinaryImagesList?.map((eachImage) => (
               <div
                 key={eachImage?.image_id}
@@ -591,7 +603,7 @@ const ProductForm = ({
         )}
 
       {imagesList?.length > 0 && (
-        <div className="mx-auto w-full xs:w-[85%] sm:w-full flex flex-wrap">
+        <div className={"w-full max-w-96 flex flex-wrap my-2"}>
           {imagesList?.map((eachImage) => (
             <div
               key={eachImage?.id}
@@ -612,7 +624,7 @@ const ProductForm = ({
         </div>
       )}
 
-      <div className="mt-5 max-w-[220px] sm:w-full sm:max-w-full mx-auto">
+      <div className={"w-full max-w-96"}>
         <CustomButton
           loading={loading}
           label={

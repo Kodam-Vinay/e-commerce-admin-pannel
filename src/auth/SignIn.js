@@ -86,7 +86,7 @@ const SignIn = () => {
               setIsError={setIsError}
             />
             <p className="mt-10 text-center text-sm text-gray-500">
-              Aleready have an account?
+              Not a member?
               <Link
                 to={ROUTING_PATHS.signup}
                 className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"

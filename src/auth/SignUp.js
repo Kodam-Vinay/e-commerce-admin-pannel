@@ -110,7 +110,7 @@ const SignUp = () => {
                 isError ? "mt-0" : "mt-10"
               }`}
             >
-              Not a member?
+              Aleready have an account?
               <Link
                 to={ROUTING_PATHS.signin}
                 className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"

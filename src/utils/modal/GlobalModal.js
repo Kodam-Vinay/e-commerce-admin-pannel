@@ -38,7 +38,10 @@ export default function GlobalModal() {
         border: paths?.includes(contentType)
           ? "1px solid red"
           : "1px solid #5046e5",
+        backgroundColor: "transparent",
         width: "100%",
+        marginLeft: "auto",
+        marginRight: "auto",
       }}
     >
       <ModalDialog
@@ -48,9 +51,10 @@ export default function GlobalModal() {
           zIndex: zIndex,
           width: paths?.includes(contentType)
             ? "400px"
-            : isMobile || size?.width < "500px"
+            : isMobile || size?.width < 500
             ? "100%"
             : "500px",
+          maxWidth: "500px",
         }}
       >
         {paths?.includes(contentType) ? <ConfirmationModal /> : <InputModal />}

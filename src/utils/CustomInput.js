@@ -15,6 +15,7 @@ export default function CustomInput({
   pattern,
   inputMode,
   list,
+  autoComplete,
 }) {
   return (
     <div className={`max-w-96 ${containerClassName}`}>
@@ -28,6 +29,7 @@ export default function CustomInput({
       )}
       <div className="mt-2 relative">
         <input
+          autoComplete={autoComplete ? autoComplete : label}
           id={label}
           type={type}
           value={value}

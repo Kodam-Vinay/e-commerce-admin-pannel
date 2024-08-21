@@ -1,8 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import CustomButton from "../../utils/CustomButton";
 import CustomInput from "../../utils/CustomInput";
 import { useSelector } from "react-redux";
-import { MODAL_CONTENT_TYPES, ROUTING_PATHS } from "../../utils/constants";
+import {
+  CLOUDINARY_IMAGE_ACCESS_URL,
+  MODAL_CONTENT_TYPES,
+  ROUTING_PATHS,
+} from "../../utils/constants";
+import { ThreeCircles } from "react-loader-spinner";
+import { Avatar } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const CategoryBrandForm = ({
   isError,
@@ -22,7 +29,15 @@ const CategoryBrandForm = ({
   setSelectedBrandsList,
   selectedBrandsList,
   setCategoryObject,
+  handleImageUpload,
+  imageUrl,
+  isSubmitClicked,
+  isImageUploadClicked,
 }) => {
+  const fileInputRef = useRef();
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
   const contentType = useSelector((store) => store?.modal?.contentType);
   const buttonName = contentType?.split("_")?.join(" ");
   const activePath = useSelector(
@@ -31,6 +46,11 @@ const CategoryBrandForm = ({
   const categoriesList = useSelector(
     (store) => store?.categoryBrand?.categoriesList
   );
+
+  const uploadedImageDetails = useSelector(
+    (store) => store?.persistSliceReducer?.image?.imageDetails
+  );
+
   const brandsList = useSelector((store) => store?.categoryBrand?.brandsList);
 
   useEffect(() => {
@@ -86,6 +106,68 @@ const CategoryBrandForm = ({
       }
       className={`w-full self-center max-w-96 mx-auto`}
     >
+      <div className="flex flex-col items-center my-2 mt-4 relative">
+        <div className="relative">
+          {loading && isImageUploadClicked ? (
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <ThreeCircles
+                visible={true}
+                height="80"
+                width="80"
+                ariaLabel="three-circles-loading"
+                color="#5046e5"
+              />
+            </div>
+          ) : (
+            <>
+              {!uploadedImageDetails?.imageId && !imageUrl ? (
+                <div className="h-[80px] w-[80px] border bg-gray-200"></div>
+              ) : (
+                <Avatar
+                  alt="profile_logo"
+                  src={
+                    uploadedImageDetails?.imageId
+                      ? CLOUDINARY_IMAGE_ACCESS_URL.replace(
+                          process.env.REACT_APP_CLOUDINARY_PRESET,
+                          process.env.REACT_APP_CLOUDINARY_CATEGORIES_BRANDS
+                        ) + uploadedImageDetails?.imageId.slice(37)
+                      : CLOUDINARY_IMAGE_ACCESS_URL.replace(
+                          process.env.REACT_APP_CLOUDINARY_PRESET,
+                          process.env.REACT_APP_CLOUDINARY_CATEGORIES_BRANDS
+                        ) + imageUrl
+                  }
+                  sx={{
+                    height: "80px",
+                    width: "80px",
+                    borderRadius: 0,
+                  }}
+                />
+              )}
+            </>
+          )}
+
+          <input
+            ref={fileInputRef}
+            onChange={(e) => handleImageUpload(e.target.files[0])}
+            type="file"
+            accept="image/*"
+            className={"w-full hidden"}
+          />
+          <CustomButton
+            label={
+              <AddIcon
+                sx={{
+                  height: 25,
+                  width: 25,
+                  marginLeft: 1,
+                }}
+              />
+            }
+            className="h-7 w-7 max-w-6 max-h-6 rounded-[100%] absolute top-0 right-0 transform translate-x-1/3 -translate-y-1/3 z-20"
+            onClick={handleClick}
+          />
+        </div>
+      </div>
       {/* name, status */}
       <div
         className={
@@ -215,7 +297,7 @@ const CategoryBrandForm = ({
 
       <div className="mt-5">
         <CustomButton
-          loading={loading}
+          loading={loading && isSubmitClicked}
           label={buttonName}
           disabled={!buttonActiveStatus}
           type={"submit"}

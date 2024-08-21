@@ -167,6 +167,7 @@ export const SIDEBAR_LINKS = {
   },
 };
 
+// export const API_URL = process.env.REACT_APP_LOCAL_URL;
 export const API_URL = process.env.REACT_APP_E_COMMERCE_BACKEND_URL;
 
 export const storeToastError = ({ errorMessage }) => {
@@ -249,6 +250,7 @@ export const categoriesBrandColumns = [
   { id: "s_no", label: "S.NO", minWidth: 30 },
   { id: "name", label: "Name", minWidth: 200 },
   { id: "status", label: "Status", minWidth: 70 },
+  { id: "image", label: "Image", minWidth: 80 },
   { id: "update", label: "", minWidth: 5 },
   { id: "delete", label: "", minWidth: 5 },
 ];
@@ -259,6 +261,7 @@ export const subCategoriesColumns = [
   { id: "status", label: "Status", minWidth: 70 },
   { id: "category", label: "Category", minWidth: 200 },
   { id: "brands", label: "Brands", minWidth: 180 },
+  { id: "image", label: "Image", minWidth: 80 },
   { id: "update", label: "", minWidth: 10 },
   { id: "delete", label: "", minWidth: 10 },
 ];
@@ -377,13 +380,20 @@ export const checkAnyChangesMadeCategoriesBrands = (
   text,
   status,
   enteredText,
-  enteredStatus
+  enteredStatus,
+  uploadedImageDetails,
+  imageUrl
 ) => {
+  const checkImageIsChanged =
+    uploadedImageDetails?.imageId?.slice(37).toString().trim() !==
+      imageUrl?.toString().trim() &&
+    uploadedImageDetails?.imageId !== undefined;
+
   if (type === ROUTING_PATHS.categories) {
     const checkText =
       text?.toString().trim() !== enteredText?.toString().trim();
     const checkStatus = status !== enteredStatus;
-    if (checkText || checkStatus) {
+    if (checkText || checkStatus || checkImageIsChanged) {
       return true;
     }
     return false;
@@ -391,7 +401,7 @@ export const checkAnyChangesMadeCategoriesBrands = (
     const checkText =
       text?.toString().trim() !== enteredText?.toString().trim();
     const checkStatus = status !== enteredStatus;
-    if (checkText || checkStatus) {
+    if (checkText || checkStatus || checkImageIsChanged) {
       return true;
     }
     return false;
@@ -406,15 +416,27 @@ export const checkAnyChangesMadeSubCategories = (
   category,
   enteredCategory,
   brandsList,
-  enteredBrandsList
+  enteredBrandsList,
+  uploadedImageDetails,
+  imageUrl
 ) => {
+  const checkImageIsChanged =
+    uploadedImageDetails?.imageId?.slice(19).toString().trim() !==
+      imageUrl?.toString().trim() &&
+    uploadedImageDetails?.imageId !== undefined;
   const checkSubCategory =
     subCategory?.toString().trim() !== enteredSubCategory?.toString().trim();
   const checkStatus = status !== enteredStatus;
   const checkCategory =
     category?.toString().trim() !== enteredCategory?.toString().trim();
   const checkBrandsList = brandsList?.length !== enteredBrandsList?.length;
-  if (checkSubCategory || checkStatus || checkCategory || checkBrandsList) {
+  if (
+    checkSubCategory ||
+    checkStatus ||
+    checkCategory ||
+    checkBrandsList ||
+    checkImageIsChanged
+  ) {
     return true;
   }
   return false;

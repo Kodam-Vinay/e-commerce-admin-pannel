@@ -109,13 +109,13 @@ export default function UsersTable({
                           key={column.id}
                           align={column.align || "center"}
                         >
-                          {column.id === "image" ? (
+                          {column.id === columns[4].id ? (
                             <Avatar
                               src={CLOUDINARY_IMAGE_ACCESS_URL + value}
                               alt={value}
                               key={row?.s_no}
                             />
-                          ) : column.id === "delete" ? (
+                          ) : column.id === columns[columns.length - 1].id ? (
                             <CustomButton
                               onClick={() => handleOnClickDeleteUser(row)}
                               label={

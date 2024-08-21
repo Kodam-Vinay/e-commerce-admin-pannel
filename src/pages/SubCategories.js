@@ -105,6 +105,7 @@ const SubCategories = () => {
         category_text: details?.category,
         brands_list: details?.brands_list,
         isActive: details?.status,
+        image: details?.image,
       })
     );
     dispatch(toggleModalState(true));

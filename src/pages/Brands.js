@@ -105,6 +105,7 @@ const Brands = () => {
         id: details?.category_brand_id,
         brand_text: details?.name,
         isActive: details?.status,
+        image: details?.image,
       })
     );
     dispatch(toggleModalState(true));

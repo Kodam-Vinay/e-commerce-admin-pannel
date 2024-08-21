@@ -11,17 +11,20 @@ import CustomButton from "../../utils/CustomButton";
 import EditIcon from "@mui/icons-material/Edit";
 import {
   categoriesBrandColumns,
+  CLOUDINARY_IMAGE_ACCESS_URL,
   ROUTING_PATHS,
   subCategoriesColumns,
 } from "../../utils/constants";
 import { useSelector } from "react-redux";
 import Loader from "../Loader";
+import { Avatar } from "@mui/material";
 
-function createData(s_no, name, status, id, category_brand_id) {
+function createData(s_no, name, status, image, id, category_brand_id) {
   return {
     s_no,
     name,
     status,
+    image,
     id,
     category_brand_id,
   };
@@ -73,7 +76,14 @@ export default function CatergoryBrandTable({
   );
 
   const rows = data?.map((each, index) =>
-    createData(index + 1, each?.name, each?.status, each?._id, each?._id)
+    createData(
+      index + 1,
+      each?.name,
+      each?.status,
+      each?.image,
+      each?._id,
+      each?._id
+    )
   );
 
   const rows2 = data?.map((each, index) => {
@@ -138,7 +148,13 @@ export default function CatergoryBrandTable({
                 : categoriesBrandColumns.map((column) => (
                     <TableCell
                       key={column.id}
-                      align={column.align ? column.align : "center"}
+                      align={
+                        column.id === categoriesBrandColumns[3].id
+                          ? "left"
+                          : column.align
+                          ? column.align
+                          : "center"
+                      }
                       style={{ minWidth: column.minWidth }}
                     >
                       {column.label}
@@ -170,7 +186,30 @@ export default function CatergoryBrandTable({
                               key={column.id + index}
                               align={column.align ? column.align : "center"}
                             >
-                              {column?.id === "delete" ? (
+                              {column.id === subCategoriesColumns[5].id ? (
+                                <>
+                                  {value ? (
+                                    <img
+                                      src={
+                                        CLOUDINARY_IMAGE_ACCESS_URL.replace(
+                                          process.env
+                                            .REACT_APP_CLOUDINARY_PRESET,
+                                          process.env
+                                            .REACT_APP_CLOUDINARY_CATEGORIES_BRANDS
+                                        ) + value
+                                      }
+                                      alt={value}
+                                      key={row?.s_no}
+                                      className="w-16 h-10 border max-w-10"
+                                    />
+                                  ) : (
+                                    <span className="text-xs">No Image</span>
+                                  )}
+                                </>
+                              ) : column?.id ===
+                                subCategoriesColumns[
+                                  subCategoriesColumns.length - 1
+                                ].id ? (
                                 <CustomButton
                                   onClick={() =>
                                     handleOnClickDeleteCategoryBrand(row)
@@ -187,7 +226,10 @@ export default function CatergoryBrandTable({
                                   className="w-10 max-w-10 bg-red-500 hover:bg-red-400"
                                   key={row?.s_no}
                                 />
-                              ) : column?.id === "update" ? (
+                              ) : column?.id ===
+                                subCategoriesColumns[
+                                  subCategoriesColumns.length - 2
+                                ].id ? (
                                 <CustomButton
                                   onClick={() =>
                                     handleOnClickUpdateCategoryBrand(row)
@@ -235,7 +277,32 @@ export default function CatergoryBrandTable({
                               key={column.id}
                               align={column.align ? column.align : "center"}
                             >
-                              {column?.id === subCategoriesColumns[6].id ? (
+                              {column.id === categoriesBrandColumns[3].id ? (
+                                <>
+                                  {value ? (
+                                    <img
+                                      src={
+                                        CLOUDINARY_IMAGE_ACCESS_URL.replace(
+                                          process.env
+                                            .REACT_APP_CLOUDINARY_PRESET,
+                                          process.env
+                                            .REACT_APP_CLOUDINARY_CATEGORIES_BRANDS
+                                        ) + value
+                                      }
+                                      alt={value}
+                                      key={row?.s_no}
+                                      className="w-16 h-10 border max-w-10"
+                                    />
+                                  ) : (
+                                    <span className="text-xs -ml-16">
+                                      No Image
+                                    </span>
+                                  )}
+                                </>
+                              ) : column?.id ===
+                                categoriesBrandColumns[
+                                  categoriesBrandColumns.length - 1
+                                ].id ? (
                                 <CustomButton
                                   onClick={() =>
                                     handleOnClickDeleteCategoryBrand(row)
@@ -252,7 +319,10 @@ export default function CatergoryBrandTable({
                                   className="w-10 max-w-10 bg-red-500 hover:bg-red-400"
                                   key={row?.s_no}
                                 />
-                              ) : column?.id === subCategoriesColumns[5].id ? (
+                              ) : column?.id ===
+                                categoriesBrandColumns[
+                                  categoriesBrandColumns.length - 2
+                                ].id ? (
                                 <CustomButton
                                   onClick={() =>
                                     handleOnClickUpdateCategoryBrand(row)

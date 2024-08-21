@@ -107,6 +107,7 @@ const Categoris = () => {
         id: details?.category_brand_id,
         category_text: details?.name,
         isActive: details?.status,
+        image: details?.image,
       })
     );
     dispatch(toggleModalState(true));

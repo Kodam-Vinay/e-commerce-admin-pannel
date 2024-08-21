@@ -70,7 +70,7 @@ const AuthForm = ({
         activePath === ROUTING_PATHS.profile && isMobile
           ? "pb-14"
           : activePath === ROUTING_PATHS.profile && !isMobile
-          ? "pb-4"
+          ? "pb-10"
           : "max-w-96 mx-auto"
       } `}
     >

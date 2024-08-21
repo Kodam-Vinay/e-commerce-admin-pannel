@@ -167,8 +167,8 @@ export const SIDEBAR_LINKS = {
   },
 };
 
-export const API_URL = process.env.REACT_APP_LOCAL_URL;
-// export const API_URL = process.env.REACT_APP_E_COMMERCE_BACKEND_URL;
+// export const API_URL = process.env.REACT_APP_LOCAL_URL;
+export const API_URL = process.env.REACT_APP_E_COMMERCE_BACKEND_URL;
 
 export const storeToastError = ({ errorMessage }) => {
   toast.error(errorMessage, {

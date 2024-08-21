@@ -17,7 +17,7 @@ import {
 } from "../../utils/constants";
 import { useSelector } from "react-redux";
 import Loader from "../Loader";
-import { Avatar } from "@mui/material";
+import { v4 as uniqueId } from "uuid";
 
 function createData(s_no, name, status, image, id, category_brand_id) {
   return {
@@ -35,9 +35,10 @@ function createSubCategoriesData(
   name,
   status,
   category,
+  categoryObj,
   brands,
   brands_list,
-  categoryObj,
+  image,
   id,
   category_brand_id
 ) {
@@ -46,9 +47,10 @@ function createSubCategoriesData(
     name,
     status,
     category,
+    categoryObj,
     brands,
     brands_list,
-    categoryObj,
+    image,
     id,
     category_brand_id,
   };
@@ -81,30 +83,32 @@ export default function CatergoryBrandTable({
       each?.name,
       each?.status,
       each?.image,
-      each?._id,
-      each?._id
+      each?.id,
+      each?.id
     )
   );
 
   const rows2 = data?.map((each, index) => {
     const category = categoriesList?.find(
-      (eachCategory) => eachCategory?._id === each?.category
+      (eachCategory) => eachCategory?.id === each?.category
     );
 
     const categoryName = category?.name;
     const filterBrandsList = brandsList?.filter((eachBrand) => {
-      return each?.brands?.includes(eachBrand?._id);
+      return each?.brands?.includes(eachBrand?.id);
     });
+
     return createSubCategoriesData(
       index + 1,
       each?.name,
       each?.status,
       categoryName,
-      filterBrandsList,
-      filterBrandsList,
       category,
-      each?._id,
-      each?._id
+      filterBrandsList,
+      filterBrandsList,
+      each?.image,
+      each?.id,
+      each?.id
     );
   });
 
@@ -135,11 +139,6 @@ export default function CatergoryBrandTable({
                 ? subCategoriesColumns.map((column) => (
                     <TableCell
                       key={column.id}
-                      align={
-                        column.id === subCategoriesColumns[4].id
-                          ? "left"
-                          : "center"
-                      }
                       style={{ minWidth: column.minWidth }}
                     >
                       {column.label}
@@ -148,13 +147,6 @@ export default function CatergoryBrandTable({
                 : categoriesBrandColumns.map((column) => (
                     <TableCell
                       key={column.id}
-                      align={
-                        column.id === categoriesBrandColumns[3].id
-                          ? "left"
-                          : column.align
-                          ? column.align
-                          : "center"
-                      }
                       style={{ minWidth: column.minWidth }}
                     >
                       {column.label}
@@ -176,16 +168,18 @@ export default function CatergoryBrandTable({
               activePath === ROUTING_PATHS.subcategories ? (
                 rows2
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
+                  .map((row) => {
                     return (
-                      <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={uniqueId()}
+                      >
                         {subCategoriesColumns.map((column) => {
                           const value = row[column.id];
                           return (
-                            <TableCell
-                              key={column.id + index}
-                              align={column.align ? column.align : "center"}
-                            >
+                            <TableCell key={uniqueId()}>
                               {column.id === subCategoriesColumns[5].id ? (
                                 <>
                                   {value ? (
@@ -199,7 +193,7 @@ export default function CatergoryBrandTable({
                                         ) + value
                                       }
                                       alt={value}
-                                      key={row?.s_no}
+                                      key={uniqueId()}
                                       className="w-16 h-10 border max-w-10"
                                     />
                                   ) : (
@@ -224,7 +218,7 @@ export default function CatergoryBrandTable({
                                     />
                                   }
                                   className="w-10 max-w-10 bg-red-500 hover:bg-red-400"
-                                  key={row?.s_no}
+                                  key={uniqueId()}
                                 />
                               ) : column?.id ===
                                 subCategoriesColumns[
@@ -244,12 +238,12 @@ export default function CatergoryBrandTable({
                                     />
                                   }
                                   className="w-10 max-w-10"
-                                  key={row?.s_no}
+                                  key={uniqueId()}
                                 />
                               ) : column?.id === subCategoriesColumns[4].id ? (
                                 value?.map((each) => (
                                   <li
-                                    key={each?._id}
+                                    key={uniqueId()}
                                     className="my-1 text-left"
                                   >
                                     {each?.name}
@@ -269,14 +263,16 @@ export default function CatergoryBrandTable({
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
                     return (
-                      <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={uniqueId()}
+                      >
                         {categoriesBrandColumns.map((column) => {
                           const value = row[column.id];
                           return (
-                            <TableCell
-                              key={column.id}
-                              align={column.align ? column.align : "center"}
-                            >
+                            <TableCell key={uniqueId()}>
                               {column.id === categoriesBrandColumns[3].id ? (
                                 <>
                                   {value ? (
@@ -290,13 +286,11 @@ export default function CatergoryBrandTable({
                                         ) + value
                                       }
                                       alt={value}
-                                      key={row?.s_no}
-                                      className="w-16 h-10 border max-w-10"
+                                      key={uniqueId()}
+                                      className="border max-w-16"
                                     />
                                   ) : (
-                                    <span className="text-xs -ml-16">
-                                      No Image
-                                    </span>
+                                    <span className="text-xs">No Image</span>
                                   )}
                                 </>
                               ) : column?.id ===
@@ -317,7 +311,7 @@ export default function CatergoryBrandTable({
                                     />
                                   }
                                   className="w-10 max-w-10 bg-red-500 hover:bg-red-400"
-                                  key={row?.s_no}
+                                  key={uniqueId()}
                                 />
                               ) : column?.id ===
                                 categoriesBrandColumns[
@@ -337,7 +331,7 @@ export default function CatergoryBrandTable({
                                     />
                                   }
                                   className="w-10 max-w-10"
-                                  key={row?.s_no}
+                                  key={uniqueId()}
                                 />
                               ) : (
                                 value?.toString()

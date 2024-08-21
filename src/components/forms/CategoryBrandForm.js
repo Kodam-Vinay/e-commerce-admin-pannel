@@ -10,6 +10,7 @@ import {
 import { ThreeCircles } from "react-loader-spinner";
 import { Avatar } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { v4 as uniqueId } from "uuid";
 
 const CategoryBrandForm = ({
   isError,
@@ -245,7 +246,7 @@ const CategoryBrandForm = ({
 
             <datalist id="categories">
               {categoriesList?.map((eachCategory) => (
-                <option key={eachCategory?._id} value={eachCategory?.name}>
+                <option key={eachCategory?.id} value={eachCategory?.name}>
                   {eachCategory?.name}
                 </option>
               ))}
@@ -259,7 +260,7 @@ const CategoryBrandForm = ({
               list="brands"
               label="Brands"
               onChange={(e) => handleSelectBrand(e)}
-              value={brand}
+              value={brand ? brand : ""}
               error={
                 isError &&
                 selectedBrandsList?.length === 0 &&
@@ -268,7 +269,7 @@ const CategoryBrandForm = ({
             />
             <datalist id="brands">
               {filterBrandsList?.map((eachBrand) => (
-                <option key={eachBrand?._id} value={eachBrand?.name}>
+                <option key={eachBrand?.id} value={eachBrand?.name}>
                   {eachBrand?.name}
                 </option>
               ))}
@@ -279,7 +280,7 @@ const CategoryBrandForm = ({
                 <ul className="flex flex-wrap">
                   {selectedBrandsList.map((brand, index) => (
                     <li
-                      key={index}
+                      key={uniqueId()}
                       onClick={() => handleOnClickBrand(brand?.name)}
                       className="cursor-pointer"
                     >

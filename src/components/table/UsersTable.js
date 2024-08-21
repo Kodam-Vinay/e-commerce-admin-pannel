@@ -82,7 +82,6 @@ export default function UsersTable({
               {columns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={column.align || "center"}
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
@@ -105,10 +104,7 @@ export default function UsersTable({
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
-                        <TableCell
-                          key={column.id}
-                          align={column.align || "center"}
-                        >
+                        <TableCell key={column.id}>
                           {column.id === columns[4].id ? (
                             <Avatar
                               src={CLOUDINARY_IMAGE_ACCESS_URL + value}

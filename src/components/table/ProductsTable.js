@@ -96,7 +96,6 @@ export default function ProductsTable({
               {productColumns.map((column) => (
                 <TableCell
                   key={column.id}
-                  align={column.align ? column.align : "center"}
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
@@ -121,7 +120,7 @@ export default function ProductsTable({
                       return (
                         <TableCell
                           key={column.id}
-                          align={column.align ? column.align : "center"}
+                          // align={column.align ? column.align : "center"}
                         >
                           {column.id === productColumns[10].id ? (
                             <ProductCarousel imagesList={value} />

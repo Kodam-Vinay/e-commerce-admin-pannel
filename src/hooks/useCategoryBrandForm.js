@@ -599,5 +599,6 @@ export default function useCategoryBrandForm() {
     imageUrl,
     isSubmitClicked,
     isImageUploadClicked,
+    selectedBrandsList,
   ]);
 }

@@ -53,14 +53,12 @@ const CategoryBrandForm = ({
   );
 
   const brandsList = useSelector((store) => store?.categoryBrand?.brandsList);
-
   useEffect(() => {
     setIsError(false);
   }, []);
 
   const handleSelectBrand = (e) => {
     const value = e.target.value;
-
     setBrand(value);
 
     const brand = brandsList?.find((eachCat) => eachCat?.name === value);

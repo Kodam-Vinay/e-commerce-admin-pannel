@@ -139,7 +139,9 @@ export default function CatergoryBrandTable({
                 ? subCategoriesColumns.map((column) => (
                     <TableCell
                       key={column.id}
-                      style={{ minWidth: column.minWidth }}
+                      style={{
+                        minWidth: column.minWidth,
+                      }}
                     >
                       {column.label}
                     </TableCell>

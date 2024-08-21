@@ -269,7 +269,7 @@ export const subCategoriesColumns = [
 export const productColumns = [
   { id: "s_no", label: "S.NO", minWidth: 30 },
   { id: "name", label: "Name", minWidth: 150 },
-  { id: "category", label: "Category", minWidth: 180 },
+  { id: "category", label: "Category", minWidth: 150 },
   { id: "sub_category", label: "Sub Category", minWidth: 180 },
   { id: "brand", label: "Brand", minWidth: 150 },
   { id: "features", label: "Features", minWidth: 180 },
@@ -277,7 +277,7 @@ export const productColumns = [
   { id: "description", label: "Description", minWidth: 200 },
   { id: "stock", label: "Stock", minWidth: 150 },
   { id: "specifications", label: "Specifications", minWidth: 150 },
-  { id: "images", label: "Images", minWidth: 200 },
+  { id: "images", label: "Images", minWidth: 150 },
   { id: "is_premium", label: "Is Premium", minWidth: 50 },
   { id: "update", label: "", minWidth: 10 },
   { id: "delete", label: "", minWidth: 10 },

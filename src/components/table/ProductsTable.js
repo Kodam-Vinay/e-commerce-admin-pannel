@@ -96,7 +96,10 @@ export default function ProductsTable({
               {productColumns.map((column) => (
                 <TableCell
                   key={column.id}
-                  style={{ minWidth: column.minWidth }}
+                  style={{
+                    minWidth: column.minWidth,
+                    marginLeft: column.label === "image" ? "20px" : "",
+                  }}
                 >
                   {column.label}
                 </TableCell>

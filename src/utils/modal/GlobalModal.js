@@ -42,6 +42,7 @@ export default function GlobalModal() {
         width: "100%",
         marginLeft: "auto",
         marginRight: "auto",
+        height: size.height - 30 + "px",
       }}
     >
       <ModalDialog

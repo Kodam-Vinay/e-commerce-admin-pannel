@@ -1,16 +1,9 @@
 import { useEffect, useRef } from "react";
 import CustomButton from "../../utils/CustomButton";
 import CustomInput from "../../utils/CustomInput";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  removeImageFromList,
-  resetCloudinaryImagesList,
-  resetImagesDb,
-  storeImageToList,
-} from "../../redux/slices/productSlice";
+import { useSelector } from "react-redux";
 import { v4 as uuidV4 } from "uuid";
 import {
-  checkImagesListChanges,
   CLOUDINARY_IMAGE_ACCESS_URL,
   MODAL_CONTENT_TYPES,
 } from "../../utils/constants";
@@ -43,18 +36,18 @@ const ProductForm = ({
   specifications,
   setSpecifications,
   checkAnyChangesMade,
-  compareImagesLength,
+  discount,
+  setDiscount,
+  imagesList,
+  setImagesList,
+  isSubmitClicked,
+  isImageUploadClicked,
+  handleClear,
+  handleImageRemoveFromList,
 }) => {
-  const dispatch = useDispatch();
   useEffect(() => {
     setIsError(false);
   }, []);
-  const imagesList = useSelector((store) => store?.product?.imagesList);
-
-  const cloudinaryImagesList = useSelector(
-    (store) => store?.product?.cloudinaryImagesList
-  );
-  const dbImages = useSelector((store) => store?.product?.dbImages);
 
   const contentType = useSelector((store) => store?.modal?.contentType);
 
@@ -68,23 +61,25 @@ const ProductForm = ({
 
   const brandsList = useSelector((store) => store?.categoryBrand?.brandsList);
 
-  const isSaveClicked = useSelector((store) => store?.product?.isSaveClicked);
+  const handleImageUpload = (images) => {
+    const imageArray = Object.values(images);
 
-  const handleImageUpload = (image) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const url = e.target.result;
-      const id = uuidV4();
-      const details = {
-        id,
-        image,
-        url,
-      };
-      dispatch(storeImageToList(details));
-    };
-    if (image) {
-      reader?.readAsDataURL(image);
-    }
+    imageArray.forEach((eachImage) => {
+      if (eachImage?.type === "image/png" || eachImage?.type === "image/jpeg") {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const local_url = e.target.result;
+          const image_id = uuidV4();
+          const details = {
+            image_id,
+            image: eachImage,
+            local_url,
+          };
+          setImagesList((prev) => [...prev, details]);
+        };
+        reader.readAsDataURL(eachImage);
+      }
+    });
   };
 
   const fileInputRef = useRef();
@@ -121,25 +116,6 @@ const ProductForm = ({
     setSubCategory(value);
   };
 
-  const handleClear = () => {
-    const result = checkImagesListChanges(cloudinaryImagesList, dbImages);
-
-    if (!result) {
-      dispatch(resetCloudinaryImagesList());
-      dispatch(resetImagesDb());
-      return;
-    }
-
-    if (cloudinaryImagesList?.length > 0) {
-      dispatch(resetCloudinaryImagesList());
-      return;
-    }
-
-    if (contentType === MODAL_CONTENT_TYPES.updateProduct) {
-      dispatch(resetImagesDb());
-      return;
-    }
-  };
   const isMobile = useDeviceCheck();
 
   return (
@@ -147,7 +123,7 @@ const ProductForm = ({
       onSubmit={handleAddUpdateProduct}
       className={`w-full self-center max-w-96 mx-auto space-y-3 ${
         isMobile ? "pb-4" : ""
-      }`}
+      } `}
     >
       {/* name, price */}
       <div
@@ -158,7 +134,7 @@ const ProductForm = ({
           containerClassName={"w-full max-w-96"}
           className={`w-full`}
           type="text"
-          error={isError && !name && "Name is required"}
+          error={isError && isSubmitClicked && !name && "Name is required"}
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
@@ -171,7 +147,7 @@ const ProductForm = ({
           className={`w-full`}
           type="tel"
           pattern="[0-9]*"
-          error={isError && !price && "Price is required"}
+          error={isError && isSubmitClicked && !price && "Price is required"}
           value={price}
           onChange={(event) => {
             setPrice((v) =>
@@ -192,7 +168,12 @@ const ProductForm = ({
           label={"Description"}
           className="w-full"
           type="text"
-          error={isError && !description && "Description is required"}
+          error={
+            isError &&
+            isSubmitClicked &&
+            !description &&
+            "Description is required"
+          }
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
@@ -203,7 +184,9 @@ const ProductForm = ({
           label={"Features"}
           className="w-full"
           type="text"
-          error={isError && !features && "Category is required"}
+          error={
+            isError && isSubmitClicked && !features && "Category is required"
+          }
           value={features}
           onChange={(e) => setFeatures(e.target.value)}
           required
@@ -221,6 +204,7 @@ const ProductForm = ({
           className="w-full"
           error={
             isError &&
+            isSubmitClicked &&
             Number(stock?.available) === 0 &&
             "Stock Availability is required"
           }
@@ -244,6 +228,7 @@ const ProductForm = ({
           type="text"
           error={
             isError &&
+            isSubmitClicked &&
             !stock?.warehouse_location &&
             "Stock Location is required"
           }
@@ -273,14 +258,16 @@ const ProductForm = ({
             label="Category"
             value={category}
             onChange={(e) => handleSelectCategory(e)}
-            error={isError && !category && "Category is required"}
-            disabled={categoriesList?.length === 0}
+            error={
+              isError && isSubmitClicked && !category && "Category is required"
+            }
+            disabled={categoriesList?.length === 0 || loading}
             placeholder="Category"
           />
 
           <datalist id="product_category">
             {categoriesList?.map((eachCategory) => (
-              <option key={eachCategory?._id} value={eachCategory?.name}>
+              <option key={eachCategory?.id} value={eachCategory?.name}>
                 {eachCategory?.name}
               </option>
             ))}
@@ -297,14 +284,19 @@ const ProductForm = ({
             label="SubCategory"
             value={subCategory}
             onChange={(e) => handleSelectSubCategory(e)}
-            error={isError && !subCategory && "Sub Category is required"}
-            disabled={subCategoriesList?.length === 0}
+            error={
+              isError &&
+              isSubmitClicked &&
+              !subCategory &&
+              "Sub Category is required"
+            }
+            disabled={subCategoriesList?.length === 0 || loading}
             placeholder="Sub Category"
           />
 
           <datalist id="product_sub_category">
             {subCategoriesList?.map((eachSubCategory) => (
-              <option key={eachSubCategory?._id} value={eachSubCategory?.name}>
+              <option key={eachSubCategory?.id} value={eachSubCategory?.name}>
                 {eachSubCategory?.name}
               </option>
             ))}
@@ -312,6 +304,7 @@ const ProductForm = ({
         </div>
       </div>
 
+      {/* brand, is premium */}
       <div
         className={`flex flex-col items-center sm:items-start sm:flex-row my-2 space-y-2 sm:space-y-0 sm:space-x-2 sm:justify-center`}
       >
@@ -325,14 +318,14 @@ const ProductForm = ({
             list="product_brand"
             label="Brand"
             onChange={(e) => handleSelectBrand(e)}
-            error={isError && !brand && "Brand are required"}
-            disabled={brandsList?.length === 0}
+            error={isError && isSubmitClicked && !brand && "Brand are required"}
+            disabled={brandsList?.length === 0 || loading}
             placeholder="Brand"
             value={brand}
           />
           <datalist id="product_brand">
             {brandsList?.map((eachBrand) => (
-              <option key={eachBrand?._id} value={eachBrand?.name}>
+              <option key={eachBrand?.id} value={eachBrand?.name}>
                 {eachBrand?.name}
               </option>
             ))}
@@ -379,7 +372,12 @@ const ProductForm = ({
             }));
           }}
           required
-          error={isError && !specifications?.weight && "Weight is required"}
+          error={
+            isError &&
+            isSubmitClicked &&
+            !specifications?.weight &&
+            "Weight is required"
+          }
           placeholder={"Weight"}
         />
 
@@ -400,9 +398,10 @@ const ProductForm = ({
           required
           error={
             isError &&
+            isSubmitClicked &&
             subCategory === "mobiles" &&
             !specifications?.battery_life &&
-            "Weight is required"
+            "Battery Life is required"
           }
           placeholder={"Battery Life"}
           disabled={subCategory !== "mobiles"}
@@ -427,7 +426,10 @@ const ProductForm = ({
           required
           placeholder={"Height, breadth, length"}
           error={
-            isError && !specifications?.dimensions && "Dimensions are required"
+            isError &&
+            isSubmitClicked &&
+            !specifications?.dimensions &&
+            "Dimensions are required"
           }
         />
 
@@ -445,9 +447,33 @@ const ProductForm = ({
           }}
           required
           placeholder={"Color"}
-          error={isError && !specifications?.color && "Color are required"}
+          error={
+            isError &&
+            isSubmitClicked &&
+            !specifications?.color &&
+            "Color are required"
+          }
         />
       </div>
+
+      <CustomInput
+        label="Discount"
+        containerClassName={"w-full max-w-96"}
+        className={`w-full`}
+        type="tel"
+        pattern="[0-9]*"
+        error={
+          isError && isSubmitClicked && !discount && "Discount is required"
+        }
+        value={discount}
+        onChange={(event) => {
+          setDiscount((v) =>
+            event.target.validity.valid ? event.target.value : ""
+          );
+        }}
+        required
+        placeholder={"Discount"}
+      />
 
       {/* image */}
       <div className={"w-full max-w-96"}>
@@ -460,18 +486,12 @@ const ProductForm = ({
 
         <div
           id="images"
-          className={`flex flex-col self-center items-center justify-center my-2 space-y-2 h-20 w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline ${
-            isError &&
-            cloudinaryImagesList?.length === 0 &&
-            contentType === MODAL_CONTENT_TYPES.updateProduct &&
-            dbImages?.length === 0
+          className={` flex flex-col self-center items-center justify-center my-2 space-y-2 h-20 w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline ${
+            (isError && isSubmitClicked && imagesList?.length === 0) ||
+            (isError && isImageUploadClicked && imagesList?.length === 0)
               ? "border-red-500"
               : "border-gray-300"
-          } ${
-            isSaveClicked && cloudinaryImagesList?.length > 0
-              ? "cursor-not-allowed"
-              : "cursor-pointer"
-          }`}
+          } cursor-pointer`}
           onClick={handleClick}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
@@ -480,153 +500,88 @@ const ProductForm = ({
             Drag&Drop or Click Here to Upload Images
           </p>
           <input
-            disabled={isSaveClicked && cloudinaryImagesList?.length > 0}
+            disabled={loading}
             ref={fileInputRef}
-            onChange={(e) => handleImageUpload(e.target.files[0])}
+            onChange={(e) => handleImageUpload(e.target.files)}
             type="file"
             accept="image/*"
             className={"w-full hidden"}
+            multiple
           />
         </div>
-        {!isSaveClicked &&
-          isError &&
-          imagesList?.length === 0 &&
-          cloudinaryImagesList?.length === 0 &&
-          dbImages?.length === 0 && (
-            <p className="text-[10px] xs:text-xs text-red-500">
-              {"Please Select At Least One Image"}
-            </p>
-          )}
+        {isError && imagesList?.length === 0 && (
+          <p className="text-[10px] xs:text-xs text-red-500">
+            {"Please Select At Least One Image"}
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col max-w-96">
         <div className="flex items-center self-end space-x-1">
           <CustomButton
-            loading={loading}
+            loading={isImageUploadClicked && loading}
             label={"Upload"}
             className={`w-20 mr-0 ${
-              imagesList?.length === 0
+              loading || (!isImageUploadClicked && imagesList?.length === 0)
                 ? "cursor-not-allowed bg-opacity-70"
                 : "cursor-pointer"
             }`}
             onClick={handleSaveImages}
             type={"button"}
-            disabled={imagesList?.length === 0}
+            disabled={
+              (!isImageUploadClicked && imagesList?.length === 0) || loading
+            }
           />
           <CustomButton
-            loading={loading}
             label={"Clear"}
+            loading={loading}
             className={`w-20 mr-0 ${
-              cloudinaryImagesList?.length === 0 && dbImages?.length === 0
+              loading || imagesList?.length === 0
                 ? "cursor-not-allowed  bg-opacity-70"
                 : "cursor-pointer"
             }`}
             onClick={() => handleClear()}
             type={"button"}
-            disabled={
-              cloudinaryImagesList?.length === 0 && dbImages?.length === 0
-            }
+            disabled={imagesList?.length === 0 || loading}
           />
         </div>
       </div>
 
-      {contentType === MODAL_CONTENT_TYPES.updateProduct ? (
-        compareImagesLength && cloudinaryImagesList?.length > 0 ? (
-          <div className={"w-full max-w-96 flex flex-wrap my-2"}>
-            {cloudinaryImagesList?.map((eachImage) => (
-              <div
-                key={eachImage?.image_id}
-                className="h-14 w-14 border flex flex-col items-center justify-center mr-4 mb-2"
-              >
-                <img
-                  src={
-                    CLOUDINARY_IMAGE_ACCESS_URL?.replace(
-                      process.env.REACT_APP_CLOUDINARY_PRESET,
-                      process.env.REACT_APP_CLOUDINARY_PRODUCTS_PRESET
-                    ) +
-                    "/" +
-                    eachImage?.url
-                  }
-                  alt={eachImage?.alt ? eachImage?.alt : "Product image"}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className={"w-full max-w-96 flex flex-wrap my-2"}>
-            {dbImages?.map((eachImage) => (
-              <div
-                key={eachImage?.image_id}
-                className="h-14 w-14 border flex flex-col items-center justify-center mr-4 mb-2"
-              >
-                <img
-                  src={
-                    CLOUDINARY_IMAGE_ACCESS_URL?.replace(
-                      process.env.REACT_APP_CLOUDINARY_PRESET,
-                      process.env.REACT_APP_CLOUDINARY_PRODUCTS_PRESET
-                    ) +
-                    "/" +
-                    eachImage?.url
-                  }
-                  alt={eachImage?.alt}
-                />
-              </div>
-            ))}
-          </div>
-        )
-      ) : (
-        ""
-      )}
-
-      {cloudinaryImagesList?.length > 0 &&
-        contentType === MODAL_CONTENT_TYPES.addProduct && (
-          <div className={"w-full max-w-96 flex flex-wrap my-2"}>
-            {cloudinaryImagesList?.map((eachImage) => (
-              <div
-                key={eachImage?.image_id}
-                className="h-14 w-14 border flex flex-col items-center justify-center mr-4 mb-2"
-              >
-                <img
-                  src={
-                    CLOUDINARY_IMAGE_ACCESS_URL?.replace(
-                      process.env.REACT_APP_CLOUDINARY_PRESET,
-                      process.env.REACT_APP_CLOUDINARY_PRODUCTS_PRESET
-                    ) +
-                    "/" +
-                    eachImage?.url
-                  }
-                  alt={eachImage?.alt ? eachImage?.alt : "Product image"}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-
-      {imagesList?.length > 0 && (
-        <div className={"w-full max-w-96 flex flex-wrap my-2"}>
-          {imagesList?.map((eachImage) => (
+      <div className={"w-full max-w-96 flex flex-wrap my-2"}>
+        {imagesList?.length > 0 &&
+          imagesList?.map((eachImage) => (
             <div
-              key={eachImage?.id}
+              key={eachImage?.image_id}
               className="h-14 w-14 border flex flex-col items-center justify-center mr-4 mb-2"
             >
               <CustomButton
-                disabled={isSaveClicked}
                 label={"x"}
-                onClick={() => dispatch(removeImageFromList(eachImage?.id))}
-                className="h-4 w-4 pt-1 rounded-[100%] bg-red-700 hover:bg-red-400 -mr-3 -mt-5 text-center"
+                onClick={() => handleImageRemoveFromList(eachImage?.image_id)}
+                className="h-4 w-4 pt-1 rounded-[100%] bg-red-700 hover:bg-red-400 -mr-3 -mt-4 text-center"
                 type={"button"}
                 removeButton={true}
+                disabled={loading}
               />
 
-              <img src={eachImage?.url} alt={eachImage?.image?.name} />
+              <img
+                src={
+                  eachImage?.local_url
+                    ? eachImage?.local_url
+                    : CLOUDINARY_IMAGE_ACCESS_URL.replace(
+                        process.env.REACT_APP_CLOUDINARY_PRESET,
+                        process.env.REACT_APP_CLOUDINARY_PRODUCTS_PRESET
+                      ) + eachImage?.url
+                }
+                alt={eachImage?.image?.name}
+              />
             </div>
           ))}
-        </div>
-      )}
+      </div>
 
+      {/* button */}
       <div className={"w-full max-w-96"}>
         <CustomButton
-          loading={loading}
+          loading={isSubmitClicked && loading}
           label={
             contentType === MODAL_CONTENT_TYPES.updateProduct
               ? "Update Product"
@@ -634,11 +589,11 @@ const ProductForm = ({
           }
           type={"submit"}
           className={
-            !checkAnyChangesMade
+            !checkAnyChangesMade || loading
               ? "bg-opacity-70 hover:bg-opacity-70 cursor-not-allowed w-full max-w-96 h-10 capitalize"
               : "w-full max-w-96 h-10 cursor-pointer capitalize"
           }
-          disabled={!checkAnyChangesMade}
+          disabled={!checkAnyChangesMade || loading}
         />
       </div>
     </form>
@@ -646,3 +601,103 @@ const ProductForm = ({
 };
 
 export default ProductForm;
+
+{
+  //   contentType === MODAL_CONTENT_TYPES.updateProduct ? (
+  //   compareImagesLength && cloudinaryImagesList?.length > 0 ? (
+  //     <div className={"w-full max-w-96 flex flex-wrap my-2"}>
+  //       {cloudinaryImagesList?.map((eachImage) => (
+  //         <div
+  //           key={eachImage?.image_id}
+  //           className="h-14 w-14 border flex flex-col items-center justify-center mr-4 mb-2"
+  //         >
+  //           <img
+  //             src={
+  //               CLOUDINARY_IMAGE_ACCESS_URL?.replace(
+  //                 process.env.REACT_APP_CLOUDINARY_PRESET,
+  //                 process.env.REACT_APP_CLOUDINARY_PRODUCTS_PRESET
+  //               ) +
+  //               "/" +
+  //               eachImage?.url
+  //             }
+  //             alt={eachImage?.alt ? eachImage?.alt : "Product image"}
+  //           />
+  //         </div>
+  //       ))}
+  //     </div>
+  //   ) : (
+  //     <div className={"w-full max-w-96 flex flex-wrap my-2"}>
+  //       {dbImages?.map((eachImage) => (
+  //         <div
+  //           key={eachImage?.image_id}
+  //           className="h-14 w-14 border flex flex-col items-center justify-center mr-4 mb-2"
+  //         >
+  //           <img
+  //             src={
+  //               CLOUDINARY_IMAGE_ACCESS_URL?.replace(
+  //                 process.env.REACT_APP_CLOUDINARY_PRESET,
+  //                 process.env.REACT_APP_CLOUDINARY_PRODUCTS_PRESET
+  //               ) +
+  //               "/" +
+  //               eachImage?.url
+  //             }
+  //             alt={eachImage?.alt}
+  //           />
+  //         </div>
+  //       ))}
+  //     </div>
+  //   )
+  // ) : (
+  //   ""
+  // )
+}
+
+{
+  /* {cloudinaryImagesList?.length > 0 &&
+  contentType === MODAL_CONTENT_TYPES.addProduct && (
+    <div className={"w-full max-w-96 flex flex-wrap my-2"}>
+      {cloudinaryImagesList?.map((eachImage) => (
+        <div
+          key={eachImage?.image_id}
+          className="h-14 w-14 border flex flex-col items-center justify-center mr-4 mb-2"
+        >
+          <img
+            src={
+              CLOUDINARY_IMAGE_ACCESS_URL?.replace(
+                process.env.REACT_APP_CLOUDINARY_PRESET,
+                process.env.REACT_APP_CLOUDINARY_PRODUCTS_PRESET
+              ) +
+              "/" +
+              eachImage?.url
+            }
+            alt={eachImage?.alt ? eachImage?.alt : "Product image"}
+          />
+        </div>
+      ))}
+    </div>
+  )} */
+}
+
+{
+  /* {imagesList?.length > 0 && (
+  <div className={"w-full max-w-96 flex flex-wrap my-2"}>
+    {imagesList?.map((eachImage) => (
+      <div
+        key={eachImage?.image_id}
+        className="h-14 w-14 border flex flex-col items-center justify-center mr-4 mb-2"
+      >
+        <CustomButton
+          disabled={isSaveClicked}
+          label={"x"}
+          onClick={() => dispatch(removeImageFromList(eachImage?.id))}
+          className="h-4 w-4 pt-1 rounded-[100%] bg-red-700 hover:bg-red-400 -mr-3 -mt-5 text-center"
+          type={"button"}
+          removeButton={true}
+        />
+
+        <img src={eachImage?.url} alt={eachImage?.image?.name} />
+      </div>
+    ))}
+  </div>
+)} */
+}

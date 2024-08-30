@@ -11,7 +11,7 @@ import {
   storeToastError,
   storeToastSuccess,
   USER_ROLES,
-  CLOUDINARY_IMAGE_UPLOAD_URL,
+  IMAGE_UPLOAD_PATHS,
 } from "../utils/constants";
 import {
   storeModalContent,
@@ -30,6 +30,7 @@ export default function useCategoryBrandForm() {
   const activePath = useSelector(
     (store) => store?.persistSliceReducer?.path?.activePath
   );
+  const id = useSelector((store) => store?.categoryBrand?.info?.id);
   const categoryText = useSelector(
     (store) => store?.categoryBrand?.info?.category_text
   );
@@ -109,11 +110,12 @@ export default function useCategoryBrandForm() {
         );
 
   useEffect(() => {
-    if (
-      contentType === MODAL_CONTENT_TYPES.updateCategory ||
-      contentType === MODAL_CONTENT_TYPES.updateSubCategory ||
-      contentType === MODAL_CONTENT_TYPES.updateBrand
-    ) {
+    const types = [
+      MODAL_CONTENT_TYPES.updateBrand,
+      MODAL_CONTENT_TYPES.updateCategory,
+      MODAL_CONTENT_TYPES.updateSubCategory,
+    ];
+    if (types.includes(contentType)) {
       const categoryObj = categoriesList?.find(
         (eachCategory) => eachCategory?.name === categoryText
       );
@@ -130,6 +132,7 @@ export default function useCategoryBrandForm() {
       setSubCategory("");
       setIsActive(false);
       setSelectedBrandsList([]);
+      dispatch(storeImageId({}));
     }
   }, [
     categoryText,
@@ -139,6 +142,10 @@ export default function useCategoryBrandForm() {
     contentType,
     brandList,
   ]);
+
+  useEffect(() => {
+    dispatch(storeImageId({}));
+  }, [id]);
 
   useEffect(() => {
     const getCatgoriesData = async () => {
@@ -201,11 +208,8 @@ export default function useCategoryBrandForm() {
     setIsError(false);
     setIsActive(false);
     setSelectedBrandsList([]);
-  }, [activePath]);
-
-  useEffect(() => {
     dispatch(storeImageId({}));
-  }, [activePath, contentType]);
+  }, [activePath]);
 
   useEffect(() => {
     if (brand && category && subCategory) {
@@ -216,6 +220,8 @@ export default function useCategoryBrandForm() {
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
+    setSubmitClicked(true);
+    setImageUploadClicked(false);
     if (!category) {
       setIsError(true);
       setError("All fields are required");
@@ -225,14 +231,10 @@ export default function useCategoryBrandForm() {
       name: category,
       user_id: userDetails?.user_id,
       status: isActive,
-      image: uploadedImageDetails?.imageId
-        ? uploadedImageDetails?.imageId?.slice(37)
-        : "",
+      image: uploadedImageDetails?.imageId ? uploadedImageDetails?.imageId : "",
     };
     dispatch(toggleModalConfirmState(true));
     setLoading(true);
-    setSubmitClicked(true);
-    setImageUploadClicked(false);
 
     const res = await postRequest({
       setIsError,
@@ -254,11 +256,13 @@ export default function useCategoryBrandForm() {
     setLoading(false);
     setSubmitClicked(false);
     setImageUploadClicked(false);
+    dispatch(storeImageId({}));
   };
 
   const handleAddSubCategory = async (e) => {
     e.preventDefault();
-
+    setSubmitClicked(true);
+    setImageUploadClicked(false);
     if (
       !subCategory ||
       Object.keys(categoryObject).length === 0 ||
@@ -273,14 +277,10 @@ export default function useCategoryBrandForm() {
       status: isActive,
       category: categoryObject,
       brands: selectedBrandsList,
-      image: uploadedImageDetails?.imageId
-        ? uploadedImageDetails?.imageId?.slice(37)
-        : "",
+      image: uploadedImageDetails?.imageId ? uploadedImageDetails?.imageId : "",
     };
     dispatch(toggleModalConfirmState(true));
     setLoading(true);
-    setSubmitClicked(true);
-    setImageUploadClicked(false);
 
     const res = await postRequest({
       setIsError,
@@ -301,10 +301,13 @@ export default function useCategoryBrandForm() {
     setLoading(false);
     setSubmitClicked(false);
     setImageUploadClicked(false);
+    dispatch(storeImageId({}));
   };
 
   const handleAddBrand = async (e) => {
     e.preventDefault();
+    setSubmitClicked(true);
+    setImageUploadClicked(false);
 
     if (!brand) {
       setIsError(true);
@@ -315,14 +318,10 @@ export default function useCategoryBrandForm() {
       name: brand,
       user_id: userDetails?.user_id,
       status: isActive,
-      image: uploadedImageDetails?.imageId
-        ? uploadedImageDetails?.imageId?.slice(37)
-        : "",
+      image: uploadedImageDetails?.imageId ? uploadedImageDetails?.imageId : "",
     };
     dispatch(toggleModalConfirmState(true));
     setLoading(true);
-    setSubmitClicked(true);
-    setImageUploadClicked(false);
 
     const res = await postRequest({
       setIsError,
@@ -343,26 +342,28 @@ export default function useCategoryBrandForm() {
     setLoading(false);
     setSubmitClicked(false);
     setImageUploadClicked(false);
+    dispatch(storeImageId({}));
   };
 
   const handleUpdateBrand = async (e) => {
     e.preventDefault();
+    setSubmitClicked(true);
+    setImageUploadClicked(false);
     if (!categoryOrBrandId || !category) {
       setIsError(true);
       setError("All fields are required");
+      return;
     }
     const sendDetails = {
       brand_id: categoryOrBrandId?.id,
       name: brand,
       status: isActive,
       image: uploadedImageDetails?.imageId
-        ? uploadedImageDetails?.imageId?.slice(37)
+        ? uploadedImageDetails?.imageId
         : imageUrl,
     };
     dispatch(toggleModalConfirmState(true));
     setLoading(true);
-    setSubmitClicked(true);
-    setImageUploadClicked(false);
 
     const res = await updateRequest({
       setIsError,
@@ -382,26 +383,28 @@ export default function useCategoryBrandForm() {
     setLoading(false);
     setSubmitClicked(false);
     setImageUploadClicked(false);
+    dispatch(storeImageId({}));
   };
 
   const handleUpdateCategory = async (e) => {
     e.preventDefault();
+    setSubmitClicked(true);
+    setImageUploadClicked(false);
     if (!categoryOrBrandId || !category) {
       setIsError(true);
       setError("All fields are required");
+      return;
     }
     const sendDetails = {
       category_id: categoryOrBrandId?.id,
       name: category,
       status: isActive,
       image: uploadedImageDetails?.imageId
-        ? uploadedImageDetails?.imageId?.slice(37)
+        ? uploadedImageDetails?.imageId
         : imageUrl,
     };
     dispatch(toggleModalConfirmState(true));
     setLoading(true);
-    setSubmitClicked(true);
-    setImageUploadClicked(false);
 
     const res = await updateRequest({
       setIsError,
@@ -421,10 +424,13 @@ export default function useCategoryBrandForm() {
     setLoading(false);
     setSubmitClicked(false);
     setImageUploadClicked(false);
+    dispatch(storeImageId({}));
   };
 
   const handleUpdateSubCategory = async (e) => {
     e.preventDefault();
+    setSubmitClicked(true);
+    setImageUploadClicked(false);
     if (
       !subCategory ||
       Object.keys(categoryObject)?.length === 0 ||
@@ -441,14 +447,12 @@ export default function useCategoryBrandForm() {
       category: categoryObject,
       brands: selectedBrandsList,
       image: uploadedImageDetails?.imageId
-        ? uploadedImageDetails?.imageId?.slice(37)
+        ? uploadedImageDetails?.imageId
         : imageUrl,
     };
 
     dispatch(toggleModalConfirmState(true));
     setLoading(true);
-    setSubmitClicked(true);
-    setImageUploadClicked(false);
 
     const res = await updateRequest({
       setIsError,
@@ -469,6 +473,7 @@ export default function useCategoryBrandForm() {
     setLoading(false);
     setSubmitClicked(false);
     setImageUploadClicked(false);
+    dispatch(storeImageId({}));
   };
 
   const handleImageUpload = async (imageFile) => {
@@ -481,41 +486,46 @@ export default function useCategoryBrandForm() {
     }
     if (imageFile?.type === "image/png" || imageFile?.type === "image/jpeg") {
       const formData = new FormData();
-      formData.append("file", imageFile);
+      formData.append("image", imageFile);
+      setLoading(true);
+      setSubmitClicked(false);
+      setImageUploadClicked(true);
 
-      formData.append(
-        "upload_preset",
-        process.env.REACT_APP_CLOUDINARY_CATEGORIES_BRANDS
-      );
-      formData.append(
-        "cloud_name",
-        process.env.REACT_APP_CLOUDINARY_CLOUD_NAME
-      );
+      //code
       const res = await postRequest({
+        apiUrl:
+          activePath === ROUTING_PATHS.categories
+            ? IMAGE_UPLOAD_PATHS[3]
+            : activePath === ROUTING_PATHS.subcategories
+            ? IMAGE_UPLOAD_PATHS[4]
+            : IMAGE_UPLOAD_PATHS[5],
+        details: formData,
         setError,
         setIsError,
-        apiUrl: CLOUDINARY_IMAGE_UPLOAD_URL,
-        formData,
+        token: userDetails?.jwtToken,
       });
-
-      if (res?.error) {
-        storeToastError({ errorMessage: res?.error?.message });
-      } else {
-        const imageDetails = {
-          height: res?.height,
-          width: res?.width,
-          imageId: res?.public_id,
-        };
+      if (res?.status) {
+        storeToastSuccess({ successMessage: res?.message });
         dispatch(
-          storeImageId(res?.public_id ? imageDetails : "DUMMY_PROFILE_LOGO")
+          storeImageId(
+            res?.data?.image
+              ? {
+                  imageId: res?.data?.image,
+                }
+              : {
+                  imageId: "DUMMY_FILTER_LOGO",
+                }
+          )
         );
+      } else {
+        storeToastError({ errorMessage: res?.message });
       }
+      setLoading(false);
     } else {
       storeToastError({
         errorMessage: "Please Select A Image! png/jpeg format only.",
       });
     }
-    setLoading(false);
     setSubmitClicked(false);
     setImageUploadClicked(false);
   };

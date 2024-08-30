@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import CustomButton from "../../utils/CustomButton";
 import CustomInput from "../../utils/CustomInput";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CLOUDINARY_IMAGE_ACCESS_URL,
   MODAL_CONTENT_TYPES,
@@ -11,6 +11,8 @@ import { ThreeCircles } from "react-loader-spinner";
 import { Avatar } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { v4 as uniqueId } from "uuid";
+import { storeImageId } from "../../redux/slices/imageSlice";
+import { storeCategoryBrandInfo } from "../../redux/slices/categoryBrandSlice";
 
 const CategoryBrandForm = ({
   isError,
@@ -35,6 +37,7 @@ const CategoryBrandForm = ({
   isSubmitClicked,
   isImageUploadClicked,
 }) => {
+  const dispatch = useDispatch();
   const fileInputRef = useRef();
   const handleClick = () => {
     fileInputRef.current.click();
@@ -53,6 +56,7 @@ const CategoryBrandForm = ({
   );
 
   const brandsList = useSelector((store) => store?.categoryBrand?.brandsList);
+
   useEffect(() => {
     setIsError(false);
   }, []);
@@ -82,6 +86,18 @@ const CategoryBrandForm = ({
     );
     setSelectedBrandsList(filterBrandsList);
   };
+
+  useEffect(() => {
+    const types = [
+      MODAL_CONTENT_TYPES.updateBrand,
+      MODAL_CONTENT_TYPES.updateCategory,
+      MODAL_CONTENT_TYPES.updateSubCategory,
+    ];
+    if (!types.includes(contentType)) {
+      dispatch(storeImageId({}));
+      dispatch(storeCategoryBrandInfo({}));
+    }
+  }, [contentType]);
 
   const filterBrandsList = brandsList
     ?.filter(
@@ -129,7 +145,7 @@ const CategoryBrandForm = ({
                       ? CLOUDINARY_IMAGE_ACCESS_URL.replace(
                           process.env.REACT_APP_CLOUDINARY_PRESET,
                           process.env.REACT_APP_CLOUDINARY_CATEGORIES_BRANDS
-                        ) + uploadedImageDetails?.imageId.slice(37)
+                        ) + uploadedImageDetails?.imageId
                       : CLOUDINARY_IMAGE_ACCESS_URL.replace(
                           process.env.REACT_APP_CLOUDINARY_PRESET,
                           process.env.REACT_APP_CLOUDINARY_CATEGORIES_BRANDS
@@ -167,6 +183,7 @@ const CategoryBrandForm = ({
           />
         </div>
       </div>
+
       {/* name, status */}
       <div
         className={
@@ -181,15 +198,22 @@ const CategoryBrandForm = ({
           className={`w-full`}
           type="text"
           error={
-            isError && activePath === ROUTING_PATHS.categories && !category
+            isError &&
+            isSubmitClicked &&
+            activePath === ROUTING_PATHS.categories &&
+            !category
               ? "Category is Required"
-              : isError && activePath === ROUTING_PATHS.brands && !brand
+              : isError &&
+                isSubmitClicked &&
+                activePath === ROUTING_PATHS.brands &&
+                !brand
               ? "Brand is Required"
               : isError &&
+                isSubmitClicked &&
                 activePath === ROUTING_PATHS.subcategories &&
                 !subCategory
               ? "Sub Category Is Required"
-              : ""
+              : null
           }
           value={
             activePath === ROUTING_PATHS.brands
@@ -239,7 +263,12 @@ const CategoryBrandForm = ({
               label="Category"
               value={category}
               onChange={(e) => handleSelectCategory(e)}
-              error={isError && !category && "Category is Required"}
+              error={
+                isError &&
+                isSubmitClicked &&
+                !category &&
+                "Category is Required"
+              }
             />
 
             <datalist id="categories">
@@ -261,6 +290,7 @@ const CategoryBrandForm = ({
               value={brand ? brand : ""}
               error={
                 isError &&
+                isSubmitClicked &&
                 selectedBrandsList?.length === 0 &&
                 "Brands are Required"
               }
@@ -298,7 +328,7 @@ const CategoryBrandForm = ({
         <CustomButton
           loading={loading && isSubmitClicked}
           label={buttonName}
-          disabled={!buttonActiveStatus}
+          disabled={!buttonActiveStatus || loading}
           type={"submit"}
           className={
             !buttonActiveStatus

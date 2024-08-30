@@ -4,14 +4,14 @@ import AuthForm from "../components/forms/AuthForm";
 import { postRequest, updateRequest } from "../api/apiCalls";
 import { storeUserInfo } from "../redux/slices/userSlice";
 import {
-  CLOUDINARY_IMAGE_UPLOAD_URL,
-  ROUTING_PATHS,
+  IMAGE_UPLOAD_PATHS,
   storeToastError,
   storeToastSuccess,
 } from "../utils/constants";
 import { storeImageId } from "../redux/slices/imageSlice";
 
 const Profile = () => {
+  const dispatch = useDispatch();
   const userDetails = useSelector(
     (store) => store?.persistSliceReducer?.user?.userInfo
   );
@@ -28,7 +28,8 @@ const Profile = () => {
   const [error, setError] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const dispatch = useDispatch();
+  const [isImageUploadClicked, setImageUploadClicked] = useState(false);
+  const [isSubmitClicked, setSubmitClicked] = useState(false);
   const fileInputRef = useRef();
   const handleClick = () => {
     fileInputRef.current.click();
@@ -76,6 +77,8 @@ const Profile = () => {
 
   const handleUpdateDetails = async (e) => {
     e.preventDefault();
+    setSubmitClicked(true);
+    setImageUploadClicked(false);
     if (!name || !address || !userId) {
       setIsError(true);
       setError("All fields are required");
@@ -94,7 +97,7 @@ const Profile = () => {
         new_password: newPassword,
         address,
         image: uploadedImageDetails?.imageId
-          ? uploadedImageDetails?.imageId?.slice(19)
+          ? uploadedImageDetails?.imageId
           : userDetails?.image,
         contact: {
           mobile_number: mobileNo,
@@ -107,7 +110,7 @@ const Profile = () => {
         user_id: userId,
         address,
         image: uploadedImageDetails?.imageId
-          ? uploadedImageDetails?.imageId?.slice(19)
+          ? uploadedImageDetails?.imageId
           : userDetails?.image,
         contact: {
           mobile_number: mobileNo,
@@ -133,49 +136,56 @@ const Profile = () => {
       storeToastError({ errorMessage: res?.message ? res?.message : error });
     }
     setLoading(false);
+    setSubmitClicked(false);
+    setImageUploadClicked(false);
   };
 
   const handleImageUpload = async (imageFile) => {
-    setLoading(true);
+    setSubmitClicked(false);
+    setImageUploadClicked(true);
     if (!imageFile) {
       storeToastError({ errorMessage: "Please Select A Image!" });
       return;
     }
     if (imageFile?.type === "image/png" || imageFile?.type === "image/jpeg") {
       const formData = new FormData();
-      formData.append("file", imageFile);
+      formData.append("image", imageFile);
+      setLoading(true);
+      setSubmitClicked(false);
+      setImageUploadClicked(true);
 
-      formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_PRESET);
-      formData.append(
-        "cloud_name",
-        process.env.REACT_APP_CLOUDINARY_CLOUD_NAME
-      );
+      //code
       const res = await postRequest({
+        apiUrl: IMAGE_UPLOAD_PATHS[2],
+        details: formData,
         setError,
         setIsError,
-        apiUrl: CLOUDINARY_IMAGE_UPLOAD_URL,
-        formData,
-        path: ROUTING_PATHS.signup,
+        token: userDetails?.jwtToken,
       });
-
-      if (res?.error) {
-        storeToastError({ errorMessage: res?.error?.message });
-      } else {
-        const imageDetails = {
-          height: res?.height,
-          width: res?.width,
-          imageId: res?.public_id,
-        };
+      if (res?.status) {
+        storeToastSuccess({ successMessage: res?.message });
         dispatch(
-          storeImageId(res?.public_id ? imageDetails : "DUMMY_PROFILE_LOGO")
+          storeImageId(
+            res?.data?.image
+              ? {
+                  imageId: res?.data?.image,
+                }
+              : {
+                  imageId: "DUMMY_PROFILE_LOGO",
+                }
+          )
         );
+      } else {
+        storeToastError({ errorMessage: res?.message });
       }
+      setLoading(false);
     } else {
       storeToastError({
         errorMessage: "Please Select A Image! png/jpeg format only.",
       });
     }
-    setLoading(false);
+    setSubmitClicked(false);
+    setImageUploadClicked(false);
   };
 
   return (
@@ -208,6 +218,8 @@ const Profile = () => {
         fileInputRef={fileInputRef}
         setIsError={setIsError}
         checkAnyChangesMade={checkAnyChangesMade}
+        isImageUploadClicked={isImageUploadClicked}
+        isSubmitClicked={isSubmitClicked}
       />
     </div>
   );

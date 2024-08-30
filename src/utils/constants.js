@@ -278,6 +278,7 @@ export const productColumns = [
   { id: "stock", label: "Stock", minWidth: 150 },
   { id: "specifications", label: "Specifications", minWidth: 150 },
   { id: "images", label: "Images", minWidth: 150 },
+  { id: "discount", label: "Discount", minWidth: 30 },
   { id: "is_premium", label: "Is Premium", minWidth: 50 },
   { id: "update", label: "", minWidth: 10 },
   { id: "delete", label: "", minWidth: 10 },
@@ -468,7 +469,9 @@ export const checkAnyChangesMadeProduct = (
   specifications,
   enteredSpecifications,
   cloudinaryImagesList,
-  dbImages
+  dbImages,
+  discount,
+  enteredDiscount
 ) => {
   const checkName = name?.toString().trim() !== enteredName?.toString().trim();
 
@@ -504,6 +507,8 @@ export const checkAnyChangesMadeProduct = (
 
   const imagesChanged = checkImagesListChanges(cloudinaryImagesList, dbImages);
 
+  const checkDiscount =
+    discount?.toString().trim() !== enteredDiscount?.toString().trim();
   if (
     checkName ||
     checkPrice ||
@@ -515,9 +520,29 @@ export const checkAnyChangesMadeProduct = (
     checkSubCategory ||
     checkStock ||
     checkSpecifications ||
-    imagesChanged
+    imagesChanged ||
+    checkDiscount
   ) {
     return true;
   }
   return false;
+};
+
+export const IMAGE_UPLOAD_PATHS = [
+  "products/upload_product_images",
+  "users/upload_image",
+  "shop-admin/upload_image",
+  "categories/upload_image",
+  "sub-categories/upload_image",
+  "brands/upload_image",
+];
+
+export const filterImagesAfterUpload = ({ imagesList }) => {
+  const filteredImages = imagesList.filter((image) => image?.uploaded);
+  return filteredImages;
+};
+
+export const filterNotUploadedImages = ({ imagesList }) => {
+  const filteredImages = imagesList.filter((image) => !image?.uploaded);
+  return filteredImages;
 };

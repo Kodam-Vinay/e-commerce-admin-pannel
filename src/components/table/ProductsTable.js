@@ -13,6 +13,7 @@ import CustomButton from "../../utils/CustomButton";
 import { productColumns } from "../../utils/constants";
 import Loader from "../Loader";
 import ProductCarousel from "../ProductCarousel";
+import { v4 as uniqueId } from "uuid";
 
 function createData(
   s_no,
@@ -26,6 +27,7 @@ function createData(
   stock,
   specifications,
   images,
+  discount,
   is_premium,
   id,
   product_id
@@ -42,6 +44,7 @@ function createData(
     stock,
     specifications,
     images,
+    discount,
     is_premium,
     id,
     product_id,
@@ -72,6 +75,7 @@ export default function ProductsTable({
       each?.stock,
       each?.specifications,
       each?.images,
+      each?.discount,
       each?.is_premium,
       each?.product_id,
       each?.product_id
@@ -95,7 +99,7 @@ export default function ProductsTable({
             <TableRow>
               {productColumns.map((column) => (
                 <TableCell
-                  key={column.id}
+                  key={uniqueId()}
                   style={{
                     minWidth: column.minWidth,
                     marginLeft: column.label === "image" ? "20px" : "",
@@ -117,14 +121,16 @@ export default function ProductsTable({
               rows
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={uniqueId()}
+                  >
                     {productColumns.map((column) => {
                       const value = row[column.id];
                       return (
-                        <TableCell
-                          key={column.id}
-                          // align={column.align ? column.align : "center"}
-                        >
+                        <TableCell key={uniqueId()}>
                           {column.id === productColumns[10].id ? (
                             <ProductCarousel imagesList={value} />
                           ) : column.id ===
@@ -141,7 +147,7 @@ export default function ProductsTable({
                                 />
                               }
                               className="w-10 max-w-10 bg-red-500 hover:bg-red-400"
-                              key={row?.s_no}
+                              key={uniqueId()}
                             />
                           ) : column?.id ===
                             productColumns[productColumns.length - 2].id ? (
@@ -159,8 +165,8 @@ export default function ProductsTable({
                             />
                           ) : column?.id === productColumns[5].id ? (
                             // features
-                            value?.map((each, index) => (
-                              <li key={index} className="my-1">
+                            value?.map((each) => (
+                              <li key={uniqueId()} className="my-1">
                                 {each}
                               </li>
                             ))
@@ -203,7 +209,7 @@ export default function ProductsTable({
                               <li className="list-none text-left">
                                 Dimensions:{" "}
                                 <span className="font-semibold">
-                                  {value?.color?.split(",").join("x")}
+                                  {value?.dimensions?.split(",").join(" x ")}
                                 </span>
                               </li>
                               <li className="list-none text-left">
@@ -213,6 +219,8 @@ export default function ProductsTable({
                                 </span>
                               </li>
                             </>
+                          ) : column?.id === productColumns[11].id ? (
+                            <span>{value?.toString() + "%"}</span>
                           ) : (
                             value?.toString()
                           )}

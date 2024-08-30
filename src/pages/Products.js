@@ -39,7 +39,7 @@ const Products = () => {
     const getData = async () => {
       setLoading(true);
       const res = await getRequest({
-        apiUrl: `products/all?page=${page + 1}&limit=${rowsPerPage}`,
+        apiUrl: `products/filterAll?page=${page + 1}&limit=${rowsPerPage}`,
         setIsError,
         setError,
         token: userDetails?.jwtToken,
@@ -100,6 +100,14 @@ const Products = () => {
   };
 
   const handleUpdateProduct = (details) => {
+    const filterStoredImages = details?.images?.map((eachImage) => {
+      return {
+        image_id: eachImage?.image_id,
+        url: eachImage?.url,
+        alt: eachImage?.alt,
+        uploaded: true,
+      };
+    });
     dispatch(storeModalContentType(MODAL_CONTENT_TYPES.updateProduct));
     dispatch(
       storeProductInfo({
@@ -114,6 +122,8 @@ const Products = () => {
         stored_specifications: details?.specifications,
         stored_description: details?.description,
         stored_is_premium: details?.is_premium,
+        stored_discount: details?.discount,
+        stored_images: filterStoredImages,
       })
     );
     dispatch(storeProductImagesDb(details?.images));

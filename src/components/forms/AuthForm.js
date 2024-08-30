@@ -45,6 +45,8 @@ const AuthForm = ({
   fileInputRef,
   checkAnyChangesMade,
   setIsError,
+  isImageUploadClicked,
+  isSubmitClicked,
 }) => {
   const isMobile = useDeviceCheck();
   useEffect(() => {
@@ -78,7 +80,7 @@ const AuthForm = ({
       {activePath === ROUTING_PATHS.profile && (
         <div className="flex flex-col items-center my-2 mt-4 relative">
           <div className="relative">
-            {loading ? (
+            {loading && isImageUploadClicked ? (
               <div className="flex flex-col items-center justify-center h-full w-full">
                 <ThreeCircles
                   visible={true}
@@ -93,11 +95,8 @@ const AuthForm = ({
                 alt="profile_logo"
                 src={
                   uploadedImageDetails?.imageId
-                    ? CLOUDINARY_IMAGE_ACCESS_URL +
-                      uploadedImageDetails?.imageId.slice(19)
-                    : userDetails?.image
-                    ? CLOUDINARY_IMAGE_ACCESS_URL + userDetails?.image
-                    : CLOUDINARY_IMAGE_ACCESS_URL + "DUMMY_PROFILE_LOGO"
+                    ? `${CLOUDINARY_IMAGE_ACCESS_URL}/${uploadedImageDetails?.imageId}`
+                    : `${CLOUDINARY_IMAGE_ACCESS_URL}/${userDetails?.image}`
                 }
                 sx={{
                   height: "80px",
@@ -150,7 +149,7 @@ const AuthForm = ({
                 : `w-full`
             }`}
             type="text"
-            error={isError && !name && "Name is Required"}
+            error={isError && isSubmitClicked && !name && "Name is Required"}
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -164,7 +163,9 @@ const AuthForm = ({
             label="User Id"
             className={`w-full`}
             type="text"
-            error={isError && !userId && "User Id is required"}
+            error={
+              isError && isSubmitClicked && !userId && "User Id is required"
+            }
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             required
@@ -185,9 +186,12 @@ const AuthForm = ({
           className="w-full"
           type={activePath === ROUTING_PATHS.signup ? "email" : "text"}
           error={
-            isError && !email && activePath === ROUTING_PATHS.signin
+            isError &&
+            isSubmitClicked &&
+            !email &&
+            activePath === ROUTING_PATHS.signin
               ? "Email/User ID is required"
-              : isError && !email
+              : isError && isSubmitClicked && !email
               ? "Email is required"
               : null
           }
@@ -215,7 +219,9 @@ const AuthForm = ({
             value={role}
             id="role"
             className={`w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline ${
-              isError && !role ? "border-red-500" : "border-gray-300"
+              isError && isSubmitClicked && !role
+                ? "border-red-500"
+                : "border-gray-300"
             } `}
             onChange={(e) => setRole(e.target.value)}
           >
@@ -255,9 +261,13 @@ const AuthForm = ({
             activePath === ROUTING_PATHS.profile &&
             confirmPassword?.length > 0 &&
             !password &&
+            isSubmitClicked &&
             isError
               ? "Old Password is required"
-              : activePath !== ROUTING_PATHS.profile && isError && !password
+              : activePath !== ROUTING_PATHS.profile &&
+                isError &&
+                isSubmitClicked &&
+                !password
               ? "Pasword is required"
               : null
           }
@@ -287,10 +297,12 @@ const AuthForm = ({
               activePath === ROUTING_PATHS.profile &&
               password?.length > 0 &&
               !confirmPassword &&
+              isSubmitClicked &&
               isError
                 ? "New Password is required"
                 : activePath !== ROUTING_PATHS.profile &&
                   isError &&
+                  isSubmitClicked &&
                   !confirmPassword
                 ? "Confirm Pasword is required"
                 : null
@@ -329,7 +341,12 @@ const AuthForm = ({
             }`}
             type="tel"
             pattern="[0-9]*"
-            error={isError && !mobileNo && "Mobile Number Required"}
+            error={
+              isError &&
+              isSubmitClicked &&
+              !mobileNo &&
+              "Mobile Number Required"
+            }
             value={mobileNo ? mobileNo : ""}
             onChange={(event) => {
               setMobileNo((v) =>
@@ -347,7 +364,12 @@ const AuthForm = ({
             label="Contact Email"
             className={`w-full`}
             type="text"
-            error={isError && !contactEmail && "User Id is required"}
+            error={
+              isError &&
+              isSubmitClicked &&
+              !contactEmail &&
+              "User Id is required"
+            }
             value={contactEmail ? contactEmail : ""}
             onChange={(e) => setContactEmail(e.target.value)}
             required
@@ -380,13 +402,15 @@ const AuthForm = ({
               <label htmlFor="role">Address</label>
               <textarea
                 className={`w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline ${
-                  isError && !address ? "border-red-500" : "border-gray-300"
+                  isError && isSubmitClicked && !address
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Address"
               />
-              {isError && !address && (
+              {isError && isSubmitClicked && !address && (
                 <p className="text-[10px] xs:text-xs text-red-500">
                   {"Address Is Required"}
                 </p>
@@ -398,7 +422,11 @@ const AuthForm = ({
 
       <div className="mt-5">
         <CustomButton
-          loading={loading}
+          loading={
+            activePath === ROUTING_PATHS.profile.path
+              ? isSubmitClicked && loading
+              : loading
+          }
           disabled={
             activePath === ROUTING_PATHS.profile && !checkAnyChangesMade
           }

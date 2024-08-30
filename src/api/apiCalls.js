@@ -1,8 +1,4 @@
-import {
-  API_URL,
-  CLOUDINARY_IMAGE_UPLOAD_URL,
-  ROUTING_PATHS,
-} from "../utils/constants";
+import { API_URL, IMAGE_UPLOAD_PATHS, ROUTING_PATHS } from "../utils/constants";
 
 export const postRequest = async ({
   setIsError,
@@ -11,7 +7,6 @@ export const postRequest = async ({
   apiUrl,
   token,
   path,
-  formData,
 }) => {
   try {
     const options = {
@@ -30,15 +25,17 @@ export const postRequest = async ({
 
     const imageOptions = {
       method: "POST",
-      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: details,
     };
-    const api =
-      apiUrl === CLOUDINARY_IMAGE_UPLOAD_URL
-        ? CLOUDINARY_IMAGE_UPLOAD_URL
-        : API_URL + apiUrl;
-    const sendOptions =
-      apiUrl === CLOUDINARY_IMAGE_UPLOAD_URL ? imageOptions : options;
-    const response = await fetch(api, sendOptions);
+
+    const sendOptions = IMAGE_UPLOAD_PATHS.includes(apiUrl)
+      ? imageOptions
+      : options;
+
+    const response = await fetch(API_URL + apiUrl, sendOptions);
     const data = await response.json();
     if (response.ok && data?.status) {
       setIsError(false);
